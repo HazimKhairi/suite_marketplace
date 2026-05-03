@@ -9,6 +9,9 @@ export const TEAM = {
 export const ORG_CONTACT = {
   phone: '0139604899',
   phoneDisplay: '013-960 4899',
+  // International format (no leading 0, country code 60) for wa.me / tel links
+  whatsapp: '60139604899',
+  whatsappUrl: 'https://wa.me/60139604899',
   // RM to list a product if other sports / clubs want in
   listingFee: 15,
 };

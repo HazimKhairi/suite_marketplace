@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import { formatMYR } from '@/lib/utils';
-import type { OrderStatus } from '@/lib/types';
+import type { OcrResult, OrderStatus } from '@/lib/types';
 
 type Item = {
   product_name: string;
@@ -172,6 +172,97 @@ export async function sendOrderEmail(order: OrderForEmail, status: OrderStatus) 
     from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
     to: order.customer_email,
     subject: `[${order.order_number}] ${copy.title}`,
+    html,
+  });
+}
+
+type AdminReceiptPayload = {
+  order_id: string;
+  order_number: string;
+  customer_name: string;
+  customer_phone: string;
+  customer_email: string | null;
+  total_amount: number;
+  match: boolean;
+  new_status: OrderStatus;
+  ocr: OcrResult;
+};
+
+function adminUrl(orderId: string) {
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://suite-marketplace.vercel.app';
+  return `${base}/admin/orders/${orderId}`;
+}
+
+export async function sendAdminReceiptEmail(payload: AdminReceiptPayload) {
+  const to = process.env.ADMIN_EMAIL ?? 'hazim4128@gmail.com';
+  const verdictLabel = payload.match ? 'Auto-matched' : 'Needs review';
+  const verdictTone = payload.match ? '#0f5132' : '#b1361f';
+  const detected = payload.ocr.detected_amount;
+  const detectedAmount = detected != null ? formatMYR(detected) : 'Not detected';
+
+  const fields: { k: string; v: string }[] = [
+    { k: 'Order', v: payload.order_number },
+    { k: 'Customer', v: payload.customer_name },
+    { k: 'Phone', v: payload.customer_phone },
+    { k: 'Email', v: payload.customer_email ?? 'Not provided' },
+    { k: 'Total expected', v: formatMYR(Number(payload.total_amount)) },
+    { k: 'OCR amount', v: detectedAmount },
+    { k: 'OCR recipient', v: payload.ocr.detected_recipient ?? 'Not detected' },
+    { k: 'OCR reference', v: payload.ocr.detected_reference ?? 'Not detected' },
+    { k: 'OCR bank', v: payload.ocr.detected_bank ?? 'Not detected' },
+    { k: 'OCR date', v: payload.ocr.detected_date ?? 'Not detected' },
+    { k: 'Confidence', v: payload.ocr.confidence },
+    { k: 'Looks real', v: payload.ocr.is_likely_real ? 'Yes' : 'Suspect' },
+    { k: 'New status', v: payload.new_status.replace('_', ' ') },
+  ];
+
+  const rows = fields
+    .map(
+      (f) => `
+        <div class="row">
+          <div class="muted">${escapeHtml(f.k)}</div>
+          <div class="mono">${escapeHtml(f.v)}</div>
+        </div>
+      `,
+    )
+    .join('');
+
+  const notes = payload.ocr.notes
+    ? `<p class="muted" style="margin-top:18px; line-height:1.6;"><strong>Notes:</strong> ${escapeHtml(payload.ocr.notes)}</p>`
+    : '';
+
+  const html = `
+    <html>
+      <head><style>${BASE_STYLES}</style></head>
+      <body>
+        <div class="wrap">
+          <div class="eyebrow" style="margin-bottom:8px;">Suite Games 2026 / Admin</div>
+          <h1>Receipt uploaded.</h1>
+          <p class="muted" style="margin-top:12px; line-height:1.6;">
+            ${escapeHtml(payload.customer_name)} just uploaded a payment receipt for order
+            <span class="mono">${escapeHtml(payload.order_number)}</span>.
+          </p>
+
+          <div class="card" style="margin-top:24px;">
+            <div class="pill" style="background:${verdictTone}; color:#ffffff;">${verdictLabel}</div>
+            <div style="margin-top:18px;">${rows}</div>
+            ${notes}
+            <a href="${adminUrl(payload.order_id)}" class="button" style="margin-top:24px;">Open in admin</a>
+          </div>
+
+          <p class="footer">
+            Suite Games 2026 / Admin notification<br/>
+            Made by <a href="https://hazimdev.com" style="color:#6f6c66;">hazimdev</a>
+          </p>
+        </div>
+      </body>
+    </html>
+  `;
+
+  await getTransport().sendMail({
+    from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
+    to,
+    subject: `[Receipt] ${payload.order_number} / ${verdictLabel}`,
     html,
   });
 }

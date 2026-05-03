@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Phone } from 'lucide-react';
+import { ArrowRight, MessageCircle } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/server';
 import { TEAM, ORG_CONTACT } from '@/lib/teams';
 import { formatMYR } from '@/lib/utils';
@@ -221,16 +221,18 @@ export default async function Home() {
               admin tracking.
             </p>
             <a
-              href={`tel:${ORG_CONTACT.phone}`}
+              href={ORG_CONTACT.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-12 inline-flex items-center gap-3 bg-ink text-canvas h-14 px-8 hover:bg-flame-red transition-colors"
             >
-              <Phone className="w-4 h-4" strokeWidth={1.5} />
+              <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
               <span className="text-[15px] font-heading font-semibold">
-                Call {ORG_CONTACT.phoneDisplay}
+                WhatsApp {ORG_CONTACT.phoneDisplay}
               </span>
             </a>
             <p className="mt-4 text-[13px] text-muted">
-              WhatsApp or call. Sukan UiTM KT admin will set you up.
+              Drop the Sukan UiTM KT admin a WhatsApp and they will set you up.
             </p>
           </div>
         </div>

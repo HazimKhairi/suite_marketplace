@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { extractReceipt, matchReceipt } from '@/lib/gemini';
-import { sendOrderEmail } from '@/lib/email';
+import { sendAdminReceiptEmail, sendOrderEmail } from '@/lib/email';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -30,7 +30,7 @@ export async function POST(
   const supabase = createAdminClient();
   const { data: order, error: oErr } = await supabase
     .from('orders')
-    .select('id, total_amount, status, order_number, customer_name, customer_email, delivery_method, delivery_address, order_items(*)')
+    .select('id, total_amount, status, order_number, customer_name, customer_phone, customer_email, delivery_method, delivery_address, order_items(*)')
     .eq('id', id)
     .maybeSingle();
 
@@ -99,6 +99,22 @@ export async function POST(
     } catch (e) {
       console.error('Email send failed:', e);
     }
+  }
+
+  try {
+    await sendAdminReceiptEmail({
+      order_id: order.id,
+      order_number: order.order_number,
+      customer_name: order.customer_name,
+      customer_phone: order.customer_phone,
+      customer_email: order.customer_email,
+      total_amount: order.total_amount,
+      match,
+      new_status: newStatus,
+      ocr,
+    });
+  } catch (e) {
+    console.error('Admin notification failed:', e);
   }
 
   return NextResponse.json({ ocr, match, status: newStatus });
