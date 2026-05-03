@@ -121,15 +121,17 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-24 lg:pt-32">
-        <div className="grid grid-cols-12 gap-6 mb-12">
-          <div className="col-span-12 md:col-span-3">
+      <section id="catalog" className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-24 lg:pt-32">
+        <div className="grid grid-cols-12 gap-6 mb-12 items-end">
+          <div className="col-span-12 md:col-span-7">
             <p className="eyebrow">01 / The drop</p>
-          </div>
-          <div className="col-span-12 md:col-span-9">
-            <h2 className="h-section text-[40px] md:text-[72px]">
-              Two cuts. <span className="text-flame-red">One</span> team.
+            <h2 className="h-section text-[40px] md:text-[80px] mt-4">
+              Four cuts. <span className="text-flame-red">One</span> squad.
             </h2>
+          </div>
+          <div className="col-span-12 md:col-span-5 body-lede text-muted text-[15px]">
+            Black or white. Short or long. Pick the cut, drop your name and number on the back, hit
+            the court at Suite Games 11.12.13 June.
           </div>
         </div>
 
@@ -139,35 +141,48 @@ export default async function Home() {
             drop.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-line">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line">
             {products.map((p, i) => (
               <Link
                 key={p.id}
                 href={`/jerseys/${p.slug}`}
-                className="group bg-canvas p-8 lg:p-12 flex flex-col"
+                className="group bg-canvas p-5 lg:p-7 flex flex-col"
               >
                 <div className="aspect-[4/5] relative overflow-hidden bg-paper">
                   <Image
                     src={p.image_url}
                     alt={p.name}
                     fill
-                    className="object-cover group-hover:scale-[1.02] transition-transform duration-700"
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                    sizes="(max-width: 768px) 50vw, 25vw"
                   />
+                  {p.stock < 10 && p.stock > 0 && (
+                    <span className="absolute top-3 left-3 bg-flame-red text-white px-2 py-1 text-[10px] font-mono uppercase tracking-[0.16em]">
+                      Low stock
+                    </span>
+                  )}
+                  {p.stock === 0 && (
+                    <span className="absolute top-3 left-3 bg-ink text-canvas px-2 py-1 text-[10px] font-mono uppercase tracking-[0.16em]">
+                      Sold out
+                    </span>
+                  )}
                 </div>
-                <div className="mt-6 flex items-start justify-between">
-                  <div>
-                    <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
-                      0{i + 1} / {p.sleeve_type === 'short' ? 'Short sleeve' : 'Long sleeve'}
+                <div className="mt-5 flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+                      {String(i + 1).padStart(2, '0')} / {p.color} /{' '}
+                      {p.sleeve_type === 'short' ? 'Short' : 'Long'}
                     </p>
-                    <p className="text-[18px] mt-2 font-heading font-bold">{p.name}</p>
+                    <p className="text-[14px] mt-2 font-heading font-bold leading-tight">
+                      {p.name}
+                    </p>
                   </div>
-                  <p className="font-mono text-[16px]">{formatMYR(p.price)}</p>
+                  <p className="font-mono text-[14px] whitespace-nowrap">{formatMYR(p.price)}</p>
                 </div>
-                <p className="mt-3 text-[13px] text-muted inline-flex items-center gap-2 group-hover:text-flame-red transition-colors">
+                <p className="mt-3 text-[12px] text-muted inline-flex items-center gap-1.5 group-hover:text-flame-red transition-colors">
                   Order and customize
                   <ArrowRight
-                    className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                    className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"
                     strokeWidth={1.5}
                   />
                 </p>
