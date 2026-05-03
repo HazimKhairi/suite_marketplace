@@ -50,12 +50,15 @@ export function CheckoutClient() {
 
   const total = subtotal;
 
-  const canProceedDetails = useMemo(() => {
-    if (form.customer_name.trim().length < 2) return false;
-    if (form.customer_phone.replace(/\s|-/g, '').length < 8) return false;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.customer_email.trim())) return false;
-    return true;
+  const detailIssues = useMemo(() => {
+    const issues: string[] = [];
+    if (form.customer_name.trim().length < 2) issues.push('full name');
+    if (form.customer_phone.replace(/\s|-/g, '').length < 8) issues.push('phone');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.customer_email.trim())) issues.push('email');
+    return issues;
   }, [form]);
+
+  const canProceedDetails = detailIssues.length === 0;
 
   if (!ready) {
     return (
@@ -268,7 +271,7 @@ export function CheckoutClient() {
                 <div>
                   <Label>Full name (orderer)</Label>
                   <Input
-                    placeholder="Muhammad Hazim"
+                    placeholder="e.g. Aiman bin Abdullah"
                     value={form.customer_name}
                     onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
                   />
@@ -515,6 +518,11 @@ export function CheckoutClient() {
                   {creating ? 'Creating' : 'Continue to payment'}
                   <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
                 </button>
+                {!canProceedDetails && !creating && (
+                  <p className="text-[12px] font-mono uppercase tracking-[0.14em] text-flame-red">
+                    Missing {detailIssues.join(', ')}
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={() => setStep('review')}
