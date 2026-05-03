@@ -1,10 +1,9 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
-import { extractReceipt, matchReceipt } from '@/lib/ocr';
 import { sendAdminReceiptEmail, sendOrderEmail } from '@/lib/email';
 
 export const runtime = 'nodejs';
-export const maxDuration = 60;
+export const maxDuration = 30;
 
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
 const MAX_BYTES = 8 * 1024 * 1024;
@@ -68,21 +67,16 @@ export async function POST(
   const attemptsUsed = priorCount + 1;
   const attemptsRemaining = MAX_ATTEMPTS - attemptsUsed;
 
-  const expectedHolder = process.env.NEXT_PUBLIC_BANK_HOLDER ?? 'MUHAMMAD HAZIM';
-  const ocr = await extractReceipt(buf, expectedHolder);
-
-  const match = matchReceipt(ocr, Number(order.total_amount), expectedHolder);
-  // Status is ALWAYS verifying after upload, even when the OCR matches. The admin is the
-  // source of truth for "paid" so receipts can be reviewed against the actual image rather
-  // than the auto-match alone.
+  // Status is always verifying after upload. Admin reviews the actual receipt image in
+  // /admin/orders/[id] and flips to paid via the OrderActions UI.
   const newStatus: 'verifying' = 'verifying';
 
   const { error: updErr } = await supabase
     .from('orders')
     .update({
       receipt_url: path,
-      ocr_result: ocr,
-      ocr_match: match,
+      ocr_result: null,
+      ocr_match: null,
       status: newStatus,
     })
     .eq('id', id);
@@ -116,17 +110,14 @@ export async function POST(
       customer_phone: order.customer_phone,
       customer_email: order.customer_email,
       total_amount: order.total_amount,
-      match,
-      new_status: newStatus,
-      ocr,
+      receipt_url: path,
+      attempts_used: attemptsUsed,
     });
   } catch (e) {
     console.error('Admin notification failed:', e);
   }
 
   return NextResponse.json({
-    ocr,
-    match,
     status: newStatus,
     attempts_used: attemptsUsed,
     attempts_remaining: attemptsRemaining,

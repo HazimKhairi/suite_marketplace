@@ -11,7 +11,6 @@ import { formatMYR } from '@/lib/utils';
 import { effectiveUnitPrice, surchargeLabel } from '@/lib/pricing';
 import { Input, Label } from '@/components/ui/input';
 import { ORG_CONTACT } from '@/lib/teams';
-import type { OcrResult } from '@/lib/types';
 
 type Step = 'review' | 'details' | 'payment';
 
@@ -46,9 +45,7 @@ export function CheckoutClient() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadResult, setUploadResult] = useState<
     | {
-        match: boolean;
         status: string;
-        ocr: OcrResult;
         attempts_used: number;
         attempts_remaining: number;
       }
@@ -136,12 +133,8 @@ export function CheckoutClient() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? 'Upload failed');
       setUploadResult(json);
-      if (json.match) {
-        toast.success('Receipt received. Pending admin review.');
-        clear();
-      } else {
-        toast.message('Receipt received. Pending admin review.');
-      }
+      toast.success('Receipt received. Pending admin review.');
+      clear();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Upload failed');
     } finally {
@@ -428,7 +421,7 @@ export function CheckoutClient() {
                     >
                       <span className="text-[15px]">
                         {uploading
-                          ? 'Verifying receipt'
+                          ? 'Sending receipt'
                           : selectedFile
                             ? `Pay now / ${formatMYR(Number(order.total_amount))}`
                             : 'Pay now'}
@@ -444,127 +437,66 @@ export function CheckoutClient() {
                 )}
 
                 {uploadResult && (
-                  <div
-                    className={`mt-5 border p-6 ${
-                      uploadResult.match ? 'border-leaf bg-leaf/5' : 'border-flame-red bg-flame-red/5'
-                    }`}
-                  >
+                  <div className="mt-5 border border-leaf bg-leaf/5 p-6">
                     <div className="flex items-center gap-2">
-                      <Check
-                        className={`w-4 h-4 ${
-                          uploadResult.match ? 'text-leaf' : 'text-flame-red'
-                        }`}
-                        strokeWidth={2}
-                      />
+                      <Check className="w-4 h-4 text-leaf" strokeWidth={2} />
                       <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
-                        {uploadResult.match
-                          ? 'Receipt received. Pending admin review.'
-                          : 'Amount does not match.'}
+                        Receipt received. Pending admin review.
                       </p>
                     </div>
+                    <p className="mt-3 body-lede text-[14px] text-ink-soft">
+                      The admin verifies every receipt against the uploaded image and will email
+                      you the confirmation, usually within 24 hours. Use the order number to track
+                      the status anytime.
+                    </p>
+                    <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+                      Attempt {uploadResult.attempts_used} of {MAX_RECEIPT_ATTEMPTS}
+                      {uploadResult.attempts_remaining > 0
+                        ? ` · ${uploadResult.attempts_remaining} retry${
+                            uploadResult.attempts_remaining === 1 ? '' : 's'
+                          } left if you uploaded the wrong file`
+                        : ' · No retries left'}
+                    </p>
 
-                    {uploadResult.match ? (
-                      <>
-                        <p className="mt-3 body-lede text-[14px] text-ink-soft">
-                          Auto-check looks good. Our admin verifies every receipt against the
-                          uploaded image and will email you the confirmation, usually within 24
-                          hours.
-                        </p>
-                        <Link
-                          href={`/track?order=${order.order_number}`}
-                          className="mt-6 inline-flex items-center gap-2 bg-ink text-canvas h-12 px-6 hover:bg-flame-red transition-colors text-[14px] font-heading font-semibold"
+                    <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                      <Link
+                        href={`/track?order=${order.order_number}`}
+                        className="inline-flex items-center justify-center gap-2 bg-ink text-canvas h-12 px-6 hover:bg-flame-red transition-colors text-[14px] font-heading font-semibold"
+                      >
+                        Track order
+                        <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+                      </Link>
+                      {uploadResult.attempts_remaining > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUploadResult(null);
+                            setSelectedFile(null);
+                          }}
+                          className="inline-flex items-center justify-center gap-2 border border-line h-12 px-6 hover:border-ink transition-colors text-[14px] font-heading"
                         >
-                          Track order
-                          <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        <div className="mt-4 grid grid-cols-2 gap-4 border-t border-flame-red/30 pt-4">
-                          <div>
-                            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-                              Detected
-                            </p>
-                            <p className="mt-1 font-mono text-[14px]">
-                              {uploadResult.ocr.detected_amount != null
-                                ? formatMYR(uploadResult.ocr.detected_amount)
-                                : 'Not detected'}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-                              Expected
-                            </p>
-                            <p className="mt-1 font-mono text-[14px]">
-                              {formatMYR(Number(order.total_amount))}
-                            </p>
-                          </div>
-                        </div>
-                        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-flame-red">
-                          Attempt {uploadResult.attempts_used} of {MAX_RECEIPT_ATTEMPTS}
-                          {uploadResult.attempts_remaining > 0
-                            ? ` · ${uploadResult.attempts_remaining} retry${
-                                uploadResult.attempts_remaining === 1 ? '' : 's'
-                              } left`
-                            : ' · Limit reached'}
-                        </p>
-                        <p className="mt-3 body-lede text-[13px] text-ink-soft">
-                          {uploadResult.ocr.notes ||
-                            'We could not auto-match your transfer with the order total.'}{' '}
-                          {uploadResult.attempts_remaining > 0
-                            ? 'Try a sharper screenshot of the official bank confirmation, or WhatsApp the admin if you are stuck.'
-                            : 'You have used all 5 attempts. WhatsApp the admin with this order number for manual verification.'}
-                        </p>
+                          <Upload className="w-4 h-4" strokeWidth={1.5} />
+                          Upload a different file
+                        </button>
+                      )}
+                    </div>
 
-                        {uploadResult.attempts_remaining > 0 ? (
-                          <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setUploadResult(null);
-                                setSelectedFile(null);
-                              }}
-                              className="inline-flex items-center justify-center gap-2 bg-ink text-canvas h-12 px-6 hover:bg-flame-red transition-colors text-[14px] font-heading font-semibold"
-                            >
-                              <Upload className="w-4 h-4" strokeWidth={1.5} />
-                              Try another receipt
-                            </button>
-                            <a
-                              href={`${ORG_CONTACT.whatsappUrl}?text=${encodeURIComponent(
-                                `Hi admin, I uploaded a receipt for order ${order.order_number} but the auto-check did not match. Need help confirming my payment.`,
-                              )}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center justify-center gap-2 border border-flame-red text-flame-red h-12 px-6 hover:bg-flame-red hover:text-canvas transition-colors text-[14px] font-heading font-semibold"
-                            >
-                              <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
-                              WhatsApp admin
-                            </a>
-                          </div>
-                        ) : (
-                          <a
-                            href={`${ORG_CONTACT.whatsappUrl}?text=${encodeURIComponent(
-                              `Hi admin, I have used all 5 receipt upload attempts for order ${order.order_number}. Please verify my payment manually.`,
-                            )}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-6 inline-flex items-center gap-2 bg-flame-red text-canvas h-12 px-6 hover:bg-ink transition-colors text-[14px] font-heading font-semibold"
-                          >
-                            <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
-                            WhatsApp admin
-                          </a>
-                        )}
-
-                        <div className="mt-4">
-                          <Link
-                            href={`/track?order=${order.order_number}`}
-                            className="inline-flex items-center gap-2 text-[13px] text-muted hover:text-ink"
-                          >
-                            Track order <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
-                          </Link>
-                        </div>
-                      </>
-                    )}
+                    <div className="mt-5 pt-5 border-t border-leaf/30">
+                      <p className="text-[12px] text-muted body-lede">
+                        Wrong file or transfer issue?{' '}
+                        <a
+                          href={`${ORG_CONTACT.whatsappUrl}?text=${encodeURIComponent(
+                            `Hi admin, I just uploaded a receipt for order ${order.order_number}. Need help with payment verification.`,
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-flame-red hover:text-ink inline-flex items-center gap-1"
+                        >
+                          WhatsApp the admin
+                          <MessageCircle className="w-3.5 h-3.5" strokeWidth={1.5} />
+                        </a>
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>

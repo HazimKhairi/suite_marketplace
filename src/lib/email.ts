@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import { formatMYR } from '@/lib/utils';
-import type { OcrResult, OrderStatus } from '@/lib/types';
+import type { OrderStatus } from '@/lib/types';
 
 type Item = {
   product_name: string;
@@ -183,9 +183,8 @@ type AdminReceiptPayload = {
   customer_phone: string;
   customer_email: string | null;
   total_amount: number;
-  match: boolean;
-  new_status: OrderStatus;
-  ocr: OcrResult;
+  receipt_url: string;
+  attempts_used: number;
 };
 
 function adminUrl(orderId: string) {
@@ -195,25 +194,14 @@ function adminUrl(orderId: string) {
 
 export async function sendAdminReceiptEmail(payload: AdminReceiptPayload) {
   const to = process.env.ADMIN_EMAIL ?? 'hazim4128@gmail.com';
-  const verdictLabel = payload.match ? 'Auto-matched' : 'Needs review';
-  const verdictTone = payload.match ? '#0f5132' : '#b1361f';
-  const detected = payload.ocr.detected_amount;
-  const detectedAmount = detected != null ? formatMYR(detected) : 'Not detected';
 
   const fields: { k: string; v: string }[] = [
     { k: 'Order', v: payload.order_number },
     { k: 'Customer', v: payload.customer_name },
     { k: 'Phone', v: payload.customer_phone },
     { k: 'Email', v: payload.customer_email ?? 'Not provided' },
-    { k: 'Total expected', v: formatMYR(Number(payload.total_amount)) },
-    { k: 'OCR amount', v: detectedAmount },
-    { k: 'OCR recipient', v: payload.ocr.detected_recipient ?? 'Not detected' },
-    { k: 'OCR reference', v: payload.ocr.detected_reference ?? 'Not detected' },
-    { k: 'OCR bank', v: payload.ocr.detected_bank ?? 'Not detected' },
-    { k: 'OCR date', v: payload.ocr.detected_date ?? 'Not detected' },
-    { k: 'Confidence', v: payload.ocr.confidence },
-    { k: 'Looks real', v: payload.ocr.is_likely_real ? 'Yes' : 'Suspect' },
-    { k: 'New status', v: payload.new_status.replace('_', ' ') },
+    { k: 'Amount expected', v: formatMYR(Number(payload.total_amount)) },
+    { k: 'Attempt', v: `${payload.attempts_used} of 5` },
   ];
 
   const rows = fields
@@ -227,10 +215,6 @@ export async function sendAdminReceiptEmail(payload: AdminReceiptPayload) {
     )
     .join('');
 
-  const notes = payload.ocr.notes
-    ? `<p class="muted" style="margin-top:18px; line-height:1.6;"><strong>Notes:</strong> ${escapeHtml(payload.ocr.notes)}</p>`
-    : '';
-
   const html = `
     <html>
       <head><style>${BASE_STYLES}</style></head>
@@ -240,13 +224,14 @@ export async function sendAdminReceiptEmail(payload: AdminReceiptPayload) {
           <h1>Receipt uploaded.</h1>
           <p class="muted" style="margin-top:12px; line-height:1.6;">
             ${escapeHtml(payload.customer_name)} just uploaded a payment receipt for order
-            <span class="mono">${escapeHtml(payload.order_number)}</span>.
+            <span class="mono">${escapeHtml(payload.order_number)}</span>. Open the admin
+            page, eyeball the receipt image against the expected amount, and approve or
+            reject from there.
           </p>
 
           <div class="card" style="margin-top:24px;">
-            <div class="pill" style="background:${verdictTone}; color:#ffffff;">${verdictLabel}</div>
+            <div class="pill" style="background:#b1361f; color:#ffffff;">Needs admin review</div>
             <div style="margin-top:18px;">${rows}</div>
-            ${notes}
             <a href="${adminUrl(payload.order_id)}" class="button" style="margin-top:24px;">Open in admin</a>
           </div>
 
@@ -262,7 +247,7 @@ export async function sendAdminReceiptEmail(payload: AdminReceiptPayload) {
   await getTransport().sendMail({
     from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
     to,
-    subject: `[Receipt] ${payload.order_number} / ${verdictLabel}`,
+    subject: `[Receipt] ${payload.order_number} / Needs admin review`,
     html,
   });
 }
