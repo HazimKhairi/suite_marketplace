@@ -43,6 +43,7 @@ export function CheckoutClient() {
     null,
   );
   const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadResult, setUploadResult] = useState<
     | { match: boolean; status: string; ocr: OcrResult }
     | null
@@ -368,29 +369,63 @@ export function CheckoutClient() {
               <div className="border border-line p-6 lg:p-8">
                 <p className="eyebrow">Upload receipt</p>
                 <p className="mt-2 body-lede text-[13px] text-muted">
-                  Screenshot or photo of the transfer confirmation. Auto verified by AI.
+                  Screenshot or photo of the transfer confirmation. Pick the file, then hit{' '}
+                  <em>Pay now</em> to verify.
                 </p>
 
                 {!uploadResult && (
-                  <label className="mt-5 border border-dashed border-line hover:border-ink p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors">
-                    <Upload className="w-6 h-6 text-muted" strokeWidth={1.5} />
-                    <p className="mt-3 text-[14px] font-heading">
-                      {uploading ? 'Verifying with Gemini' : 'Click to choose an image'}
-                    </p>
-                    <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-                      JPG, PNG, WEBP. Max 8 MB.
-                    </p>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      disabled={uploading}
-                      onChange={(e) => {
-                        const f = e.target.files?.[0];
-                        if (f) uploadReceipt(f);
-                      }}
-                    />
-                  </label>
+                  <>
+                    <label
+                      className={`mt-5 border border-dashed p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors ${
+                        selectedFile
+                          ? 'border-ink bg-paper'
+                          : 'border-line hover:border-ink'
+                      }`}
+                    >
+                      <Upload className="w-6 h-6 text-muted" strokeWidth={1.5} />
+                      <p className="mt-3 text-[14px] font-heading break-all px-4">
+                        {selectedFile
+                          ? selectedFile.name
+                          : 'Click to choose your receipt image'}
+                      </p>
+                      <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+                        {selectedFile
+                          ? `${(selectedFile.size / 1024 / 1024).toFixed(2)} MB · tap to swap`
+                          : 'JPG, PNG, WEBP. Max 8 MB.'}
+                      </p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        disabled={uploading}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) setSelectedFile(f);
+                        }}
+                      />
+                    </label>
+
+                    <button
+                      type="button"
+                      onClick={() => selectedFile && uploadReceipt(selectedFile)}
+                      disabled={!selectedFile || uploading}
+                      className="mt-5 w-full bg-ink text-canvas h-14 inline-flex items-center justify-between px-5 hover:bg-flame-red transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-heading font-semibold"
+                    >
+                      <span className="text-[15px]">
+                        {uploading
+                          ? 'Verifying receipt'
+                          : selectedFile
+                            ? `Pay now / ${formatMYR(Number(order.total_amount))}`
+                            : 'Pay now'}
+                      </span>
+                      <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+                    </button>
+                    {!selectedFile && !uploading && (
+                      <p className="mt-2 text-[12px] font-mono uppercase tracking-[0.14em] text-muted">
+                        Pick a receipt image to enable Pay now
+                      </p>
+                    )}
+                  </>
                 )}
 
                 {uploadResult && (

@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
-import { extractReceipt, matchReceipt } from '@/lib/gemini';
+import { extractReceipt, matchReceipt } from '@/lib/ocr';
 import { sendAdminReceiptEmail, sendOrderEmail } from '@/lib/email';
 
 export const runtime = 'nodejs';
@@ -50,22 +50,7 @@ export async function POST(
   if (upErr) return NextResponse.json({ error: upErr.message }, { status: 500 });
 
   const expectedHolder = process.env.NEXT_PUBLIC_BANK_HOLDER ?? 'MUHAMMAD HAZIM';
-  let ocr;
-  try {
-    ocr = await extractReceipt(buf.toString('base64'), file.type);
-  } catch (e) {
-    ocr = {
-      detected_amount: null,
-      detected_recipient: null,
-      detected_reference: null,
-      detected_date: null,
-      detected_bank: null,
-      raw_text: '',
-      is_likely_real: false,
-      confidence: 'low' as const,
-      notes: e instanceof Error ? e.message : 'OCR failed',
-    };
-  }
+  const ocr = await extractReceipt(buf, expectedHolder);
 
   const match = matchReceipt(ocr, Number(order.total_amount), expectedHolder);
   const newStatus = match ? 'paid' : 'verifying';

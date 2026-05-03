@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { checkoutSchema } from '@/lib/checkout';
 import { effectiveUnitPrice, sizeSurcharge } from '@/lib/pricing';
-import { sendOrderEmail } from '@/lib/email';
 import { ACTIVE_PLAYER_STATUSES } from '@/lib/players';
 import type { OrderStatus } from '@/lib/types';
 
@@ -201,33 +200,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: iErr.message }, { status: 500 });
   }
 
-  // Confirmation email (best effort, do not fail the order on email errors)
-  try {
-    await sendOrderEmail(
-      {
-        order_number: order.order_number,
-        customer_name: order.customer_name,
-        customer_email: order.customer_email,
-        delivery_method: order.delivery_method,
-        delivery_address: order.delivery_address,
-        total_amount: order.total_amount,
-        order_items: itemsToInsert.map((i) => ({
-          product_name: i.product_name,
-          category: i.category,
-          size: i.size,
-          quantity: i.quantity,
-          subtotal: i.subtotal,
-          player_name: i.player_name,
-          player_number: i.player_number,
-          player_type: i.player_type,
-          sleeve_type: i.sleeve_type,
-        })),
-      },
-      'pending_payment',
-    );
-  } catch (e) {
-    console.error('Email send failed:', e);
-  }
+  // No emails fire here. Both the customer confirmation and the admin notification go out
+  // from /api/orders/[id]/receipt once the customer has actually paid and uploaded a slip.
 
   // Reference unused helper to satisfy linter for surcharge import in this scope
   void sizeSurcharge;
