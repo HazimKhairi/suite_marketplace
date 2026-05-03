@@ -36,14 +36,14 @@ export function Footer() {
           <ul className="space-y-2 text-[14px] list-none">
             <li className="text-muted">RM {ORG_CONTACT.listingFee} per product</li>
             <li>
-              <a href={`tel:${ORG_CONTACT.phone}`} className="hover:text-flame-red">
-                {ORG_CONTACT.phoneDisplay}
+              <a
+                href={ORG_CONTACT.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-flame-red"
+              >
+                WhatsApp {ORG_CONTACT.phoneDisplay}
               </a>
-            </li>
-            <li>
-              <Link href="/admin/login" className="hover:text-flame-red">
-                Admin
-              </Link>
             </li>
           </ul>
         </div>
