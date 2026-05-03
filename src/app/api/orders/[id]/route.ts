@@ -17,7 +17,7 @@ export async function GET(
   const query = supabase
     .from('orders')
     .select(
-      'id, order_number, customer_name, customer_phone, delivery_method, total_amount, status, created_at, order_items(product_name, size, quantity, unit_price, subtotal)',
+      'id, order_number, customer_name, customer_phone, delivery_method, total_amount, status, created_at, order_items(product_name, category, size, quantity, unit_price, subtotal, player_name, player_number, player_type, sleeve_type)',
     );
 
   const { data, error } = await (isUuid ? query.eq('id', id) : query.eq('order_number', id))

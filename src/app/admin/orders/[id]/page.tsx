@@ -73,14 +73,31 @@ export default async function AdminOrderPage({
             <Section title="Items">
               <div className="divide-y divide-line">
                 {o.order_items.map((it) => (
-                  <div key={it.id} className="py-3 flex justify-between items-baseline gap-4">
-                    <div>
+                  <div key={it.id} className="py-3 flex justify-between items-start gap-4">
+                    <div className="flex-1">
                       <p className="text-[14px]">{it.product_name}</p>
-                      <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted mt-0.5">
-                        Size {it.size} · × {it.quantity}
-                      </p>
+                      <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                        <span>Size {it.size} · × {it.quantity}</span>
+                        {it.sleeve_type && (
+                          <>
+                            <span>·</span>
+                            <span>{it.sleeve_type === 'short' ? 'Lengan pendek' : 'Lengan panjang'}</span>
+                          </>
+                        )}
+                        {it.player_type && (
+                          <>
+                            <span>·</span>
+                            <span>{it.player_type === 'player' ? 'Player' : 'Non-player'}</span>
+                          </>
+                        )}
+                      </div>
+                      {it.player_name && (
+                        <p className="mt-2 inline-block bg-ink text-canvas px-3 py-1 font-mono text-[12px]">
+                          {it.player_name} <span className="opacity-60">·</span> #{it.player_number}
+                        </p>
+                      )}
                     </div>
-                    <p className="font-mono text-[13px]">{formatMYR(Number(it.subtotal))}</p>
+                    <p className="font-mono text-[13px] whitespace-nowrap">{formatMYR(Number(it.subtotal))}</p>
                   </div>
                 ))}
               </div>

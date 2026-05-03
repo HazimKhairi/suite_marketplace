@@ -1,8 +1,11 @@
+export type ProductCategory = 'jersey' | 'jacket';
+
 export type Product = {
   id: string;
   slug: string;
   name: string;
-  team_id: 'dungun' | 'kuala_terengganu' | 'bukit_besi' | 'official';
+  category: ProductCategory;
+  sleeve_type: 'short' | 'long' | null;
   color: string;
   price: number;
   stock: number;
@@ -47,10 +50,15 @@ export type OrderItem = {
   order_id: string;
   product_id: string;
   product_name: string;
+  category: 'jersey' | 'jacket';
   size: string;
   quantity: number;
   unit_price: number;
   subtotal: number;
+  player_name: string | null;
+  player_number: string | null;
+  player_type: 'player' | 'non_player' | null;
+  sleeve_type: 'short' | 'long' | null;
 };
 
 export type OcrResult = {
@@ -69,8 +77,15 @@ export type CartItem = {
   productId: string;
   slug: string;
   name: string;
+  category: 'jersey' | 'jacket';
+  sleeve_type: 'short' | 'long' | null;
   image_url: string;
   size: string;
   quantity: number;
   unit_price: number;
+  player_name: string | null;
+  player_number: string | null;
+  player_type: 'player' | 'non_player' | null;
+  // Stable identity for line within the cart
+  lineId: string;
 };

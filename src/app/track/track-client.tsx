@@ -7,6 +7,19 @@ import { Input, Label } from '@/components/ui/input';
 import { formatDate, formatMYR } from '@/lib/utils';
 import type { OrderStatus } from '@/lib/types';
 
+type LineItem = {
+  product_name: string;
+  category: 'jersey' | 'jacket';
+  size: string;
+  quantity: number;
+  unit_price: number;
+  subtotal: number;
+  player_name: string | null;
+  player_number: string | null;
+  player_type: 'player' | 'non_player' | null;
+  sleeve_type: 'short' | 'long' | null;
+};
+
 type OrderView = {
   id: string;
   order_number: string;
@@ -15,13 +28,7 @@ type OrderView = {
   delivery_method: 'pickup' | 'delivery';
   status: OrderStatus;
   created_at: string;
-  order_items: {
-    product_name: string;
-    size: string;
-    quantity: number;
-    unit_price: number;
-    subtotal: number;
-  }[];
+  order_items: LineItem[];
 };
 
 const STATUS_LABEL: Record<OrderStatus, { text: string; tone: 'default' | 'success' | 'warning' | 'error' }> = {
@@ -84,7 +91,7 @@ export function TrackClient({ initialOrder, initialPhone }: { initialOrder: stri
           <h1 className="h-display text-[56px] md:text-[80px] mt-4">Where's my kit?</h1>
         </div>
         <div className="col-span-12 md:col-span-5 text-muted text-[14px]">
-          Enter the order number we sent at checkout, plus the phone you used (optional).
+          Masuk order number kita hantar masa checkout, dan phone yang kau guna (optional).
         </div>
       </div>
 
@@ -93,7 +100,7 @@ export function TrackClient({ initialOrder, initialPhone }: { initialOrder: stri
           <div>
             <Label>Order number</Label>
             <Input
-              placeholder="SUT-20260504-0001"
+              placeholder="VB-20260504-0001"
               value={orderNumber}
               onChange={(e) => setOrderNumber(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && lookup()}
@@ -123,7 +130,7 @@ export function TrackClient({ initialOrder, initialPhone }: { initialOrder: stri
         <div className="mt-10 border border-accent p-6 max-w-2xl">
           <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">Not found</p>
           <p className="mt-2 text-[14px] text-ink-soft">
-            We couldn't match that order number{phone ? ' + phone' : ''}. Double-check and try again.
+            Tak jumpa order tu{phone ? ' + phone' : ''}. Check semula.
           </p>
         </div>
       )}
@@ -145,17 +152,30 @@ export function TrackClient({ initialOrder, initialPhone }: { initialOrder: stri
 
             <div className="border border-line">
               {order.order_items.map((it, i) => (
-                <div
-                  key={i}
-                  className="p-5 border-b border-line last:border-b-0 flex items-baseline justify-between gap-4"
-                >
-                  <div>
-                    <p className="text-[15px]">{it.product_name}</p>
-                    <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted mt-1">
-                      Size {it.size} · × {it.quantity}
-                    </p>
+                <div key={i} className="p-5 border-b border-line last:border-b-0">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <div>
+                      <p className="text-[15px]">{it.product_name}</p>
+                      <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                        <span>Size {it.size} · × {it.quantity}</span>
+                        {it.sleeve_type && <span>·</span>}
+                        {it.sleeve_type && (
+                          <span>{it.sleeve_type === 'short' ? 'Lengan pendek' : 'Lengan panjang'}</span>
+                        )}
+                        {it.player_name && <span>·</span>}
+                        {it.player_name && (
+                          <span className="text-ink">
+                            {it.player_name} #{it.player_number}
+                          </span>
+                        )}
+                        {it.player_type && <span>·</span>}
+                        {it.player_type && (
+                          <span>{it.player_type === 'player' ? 'Player' : 'Non-player'}</span>
+                        )}
+                      </div>
+                    </div>
+                    <p className="font-mono text-[14px]">{formatMYR(Number(it.subtotal))}</p>
                   </div>
-                  <p className="font-mono text-[14px]">{formatMYR(it.subtotal)}</p>
                 </div>
               ))}
               <div className="p-5 border-t border-line flex items-baseline justify-between bg-paper">
@@ -178,9 +198,7 @@ export function TrackClient({ initialOrder, initialPhone }: { initialOrder: stri
                     }`}
                   >
                     <div
-                      className={`w-2.5 h-2.5 rounded-full ${
-                        reached ? 'bg-ink' : 'bg-line'
-                      }`}
+                      className={`w-2.5 h-2.5 rounded-full ${reached ? 'bg-ink' : 'bg-line'}`}
                     />
                     <p className="text-[14px]">{s.label}</p>
                   </div>

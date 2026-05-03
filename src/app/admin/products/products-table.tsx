@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import Image from 'next/image';
 import { Save } from 'lucide-react';
 import { toast } from 'sonner';
-import { TEAMS } from '@/lib/teams';
+import { TEAM } from '@/lib/teams';
 import { formatMYR } from '@/lib/utils';
 import type { Product } from '@/lib/types';
 
@@ -48,7 +48,7 @@ export function ProductsTable({ initial }: { initial: Product[] }) {
     <div className="border border-line">
       <div className="grid grid-cols-12 gap-3 px-5 py-3 bg-paper border-b border-line font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
         <div className="col-span-4">Product</div>
-        <div className="col-span-2">Team</div>
+        <div className="col-span-2">Type</div>
         <div className="col-span-2">Price (MYR)</div>
         <div className="col-span-2">Stock</div>
         <div className="col-span-1">Active</div>
@@ -74,7 +74,16 @@ export function ProductsTable({ initial }: { initial: Product[] }) {
                 <p className="font-mono text-[11px] text-muted">{p.slug}</p>
               </div>
             </div>
-            <div className="col-span-2 text-[13px]">{TEAMS[p.team_id].short}</div>
+            <div className="col-span-2 text-[13px]">
+              <p>{TEAM.short}</p>
+              <p className="font-mono text-[10px] text-muted uppercase tracking-[0.14em] mt-0.5">
+                {p.category === 'jacket'
+                  ? 'Jacket'
+                  : p.sleeve_type === 'short'
+                    ? 'Lengan pendek'
+                    : 'Lengan panjang'}
+              </p>
+            </div>
             <div className="col-span-2">
               <input
                 type="number"

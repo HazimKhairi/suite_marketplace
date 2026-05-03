@@ -1,4 +1,4 @@
--- Suite Marketplace — SUKAN UITM TERENGGANU 2026
+-- Suite Marketplace — Volleyball UiTM Kuala Terengganu
 -- Run this in Supabase SQL Editor: https://supabase.com/dashboard/project/_/sql
 
 -- =========================================
@@ -11,7 +11,10 @@ create table if not exists public.products (
   id uuid primary key default gen_random_uuid(),
   slug text unique not null,
   name text not null,
-  team_id text not null check (team_id in ('dungun','kuala_terengganu','bukit_besi','official')),
+  category text not null default 'jersey'
+    check (category in ('jersey','jacket')),
+  sleeve_type text
+    check (sleeve_type in ('short','long')),
   color text not null,
   price numeric(10,2) not null,
   stock integer not null default 0,
@@ -48,10 +51,16 @@ create table if not exists public.order_items (
   order_id uuid not null references public.orders(id) on delete cascade,
   product_id uuid not null references public.products(id),
   product_name text not null,
+  category text not null default 'jersey' check (category in ('jersey','jacket')),
   size text not null,
   quantity integer not null check (quantity > 0),
   unit_price numeric(10,2) not null,
-  subtotal numeric(10,2) not null
+  subtotal numeric(10,2) not null,
+  -- Per-line personalization (jersey only). Jackets keep these null.
+  player_name text,
+  player_number text,
+  player_type text check (player_type in ('player','non_player')),
+  sleeve_type text check (sleeve_type in ('short','long'))
 );
 
 create index if not exists idx_orders_status on public.orders(status);
@@ -70,15 +79,15 @@ drop trigger if exists trg_orders_updated on public.orders;
 create trigger trg_orders_updated before update on public.orders
   for each row execute function public.set_updated_at();
 
--- order_number generator (SUT-YYYYMMDD-XXXX)
+-- order_number generator (VB-YYYYMMDD-XXXX)
 create or replace function public.gen_order_number() returns trigger as $$
 declare
   d text := to_char(now(), 'YYYYMMDD');
   c integer;
 begin
   select count(*) + 1 into c from public.orders
-    where order_number like 'SUT-' || d || '-%';
-  new.order_number := 'SUT-' || d || '-' || lpad(c::text, 4, '0');
+    where order_number like 'VB-' || d || '-%';
+  new.order_number := 'VB-' || d || '-' || lpad(c::text, 4, '0');
   return new;
 end;
 $$ language plpgsql;
@@ -102,13 +111,11 @@ alter table public.products enable row level security;
 alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
 
--- products: anyone can read active products
 drop policy if exists "products_read" on public.products;
 create policy "products_read" on public.products
   for select using (active = true);
 
 -- orders & order_items: only admin (service role bypasses RLS automatically)
--- We expose orders via API routes that use service role server-side.
 
 -- Storage policies
 drop policy if exists "receipts_insert_anon" on storage.objects;

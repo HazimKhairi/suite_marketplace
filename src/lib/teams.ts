@@ -1,32 +1,23 @@
-export const TEAMS = {
-  dungun: {
-    id: 'dungun',
-    name: 'UiTM Dungun',
-    fullName: 'UiTM Kampus Terengganu — Dungun',
-    short: 'DGN',
-    accent: '#0a2540',
-  },
-  kuala_terengganu: {
-    id: 'kuala_terengganu',
-    name: 'UiTM Kuala Terengganu',
-    fullName: 'UiTM Kuala Terengganu',
-    short: 'KTG',
-    accent: '#7c1d3f',
-  },
-  bukit_besi: {
-    id: 'bukit_besi',
-    name: 'UiTM Bukit Besi',
-    fullName: 'UiTM Bukit Besi',
-    short: 'BB',
-    accent: '#1f4d2e',
-  },
-  official: {
-    id: 'official',
-    name: 'Suite Games 2026',
-    fullName: 'Official Suite Games 2026 Limited',
-    short: 'SG26',
-    accent: '#111111',
-  },
+export const TEAM = {
+  id: 'vb_uitmkt',
+  short: 'VB UITMKT',
+  name: 'Volleyball · UiTM Kuala Terengganu',
+  fullName: 'UiTM Kuala Terengganu — Volleyball',
+  campus: 'UiTM Kuala Terengganu',
 } as const;
 
-export type TeamId = keyof typeof TEAMS;
+export const ORG_CONTACT = {
+  phone: '0139604899',
+  phoneDisplay: '013-960 4899',
+  // RM to list a product if other sports / clubs want in
+  listingFee: 15,
+};
+
+export const SLEEVE = {
+  short: { id: 'short', label: 'Lengan pendek', priceLabel: 'RM 28' },
+  long: { id: 'long', label: 'Lengan panjang', priceLabel: 'RM 33' },
+} as const;
+
+export type SleeveId = keyof typeof SLEEVE;
+
+export type PlayerType = 'player' | 'non_player';

@@ -8,29 +8,14 @@ export function Header() {
         <Link href="/" className="flex items-center gap-3 group">
           <span className="font-display text-2xl leading-none">Suite</span>
           <span className="eyebrow hidden sm:inline-block translate-y-[1px]">
-            Marketplace · 2026
+            VB · UiTM KT
           </span>
         </Link>
         <nav className="flex items-center gap-7 text-[13px]">
           <Link href="/jerseys" className="hover:text-accent transition-colors">
             Jerseys
           </Link>
-          <Link href="/jerseys?team=dungun" className="hidden md:inline hover:text-accent">
-            Dungun
-          </Link>
-          <Link
-            href="/jerseys?team=kuala_terengganu"
-            className="hidden md:inline hover:text-accent"
-          >
-            Kuala Terengganu
-          </Link>
-          <Link href="/jerseys?team=bukit_besi" className="hidden md:inline hover:text-accent">
-            Bukit Besi
-          </Link>
-          <Link
-            href="/track"
-            className="hidden sm:inline-flex border border-line px-4 h-9 items-center hover:border-ink"
-          >
+          <Link href="/track" className="hover:text-accent transition-colors hidden sm:inline">
             Track
           </Link>
           <CartPill />

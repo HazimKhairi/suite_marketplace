@@ -26,24 +26,43 @@ export async function POST(req: Request) {
   }
 
   const supabase = createAdminClient();
-  const ids = data.items.map((i) => i.productId);
+  const ids = Array.from(new Set(data.items.map((i) => i.productId)));
   const { data: products, error: pErr } = await supabase
     .from('products')
-    .select('id, name, slug, price, stock, active')
+    .select('id, name, slug, category, sleeve_type, price, stock, active')
     .in('id', ids);
 
   if (pErr || !products?.length) {
     return NextResponse.json({ error: 'Products not found' }, { status: 400 });
   }
 
+  // Aggregate requested quantity per product to validate against stock
+  const requested: Record<string, number> = {};
+  for (const it of data.items) {
+    requested[it.productId] = (requested[it.productId] ?? 0) + it.quantity;
+  }
+  for (const p of products) {
+    if ((requested[p.id] ?? 0) > p.stock) {
+      return NextResponse.json(
+        { error: `Insufficient stock for ${p.name}` },
+        { status: 400 },
+      );
+    }
+  }
+
   let subtotal = 0;
   const itemsToInsert: {
     product_id: string;
     product_name: string;
+    category: 'jersey' | 'jacket';
     size: string;
     quantity: number;
     unit_price: number;
     subtotal: number;
+    player_name: string | null;
+    player_number: string | null;
+    player_type: 'player' | 'non_player' | null;
+    sleeve_type: 'short' | 'long' | null;
   }[] = [];
 
   for (const item of data.items) {
@@ -51,21 +70,42 @@ export async function POST(req: Request) {
     if (!p || !p.active) {
       return NextResponse.json({ error: 'Invalid product' }, { status: 400 });
     }
-    if (item.quantity > p.stock) {
-      return NextResponse.json(
-        { error: `Insufficient stock for ${p.name}` },
-        { status: 400 },
-      );
+    const isJersey = p.category === 'jersey';
+    if (isJersey) {
+      if (!item.player_name || item.player_name.trim().length < 2) {
+        return NextResponse.json(
+          { error: `Nama untuk jersey diperlukan (${p.name})` },
+          { status: 400 },
+        );
+      }
+      if (!item.player_number || !/^[0-9]{1,3}$/.test(item.player_number.trim())) {
+        return NextResponse.json(
+          { error: `Nombor 1–3 digit untuk jersey (${p.name})` },
+          { status: 400 },
+        );
+      }
+      if (!item.player_type) {
+        return NextResponse.json(
+          { error: `Status player/non-player diperlukan (${p.name})` },
+          { status: 400 },
+        );
+      }
     }
+
     const lineSubtotal = Number(p.price) * item.quantity;
     subtotal += lineSubtotal;
     itemsToInsert.push({
       product_id: p.id,
       product_name: p.name,
+      category: p.category as 'jersey' | 'jacket',
       size: item.size,
       quantity: item.quantity,
       unit_price: Number(p.price),
       subtotal: lineSubtotal,
+      player_name: isJersey ? item.player_name!.trim().toUpperCase() : null,
+      player_number: isJersey ? item.player_number!.trim() : null,
+      player_type: isJersey ? item.player_type : null,
+      sleeve_type: (p.sleeve_type as 'short' | 'long' | null) ?? null,
     });
   }
 

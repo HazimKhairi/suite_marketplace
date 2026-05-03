@@ -70,15 +70,15 @@ export function CheckoutClient() {
     return (
       <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 pb-32">
         <p className="eyebrow">Checkout · empty</p>
-        <h1 className="h-display text-[56px] md:text-[80px] mt-4">No jerseys yet.</h1>
+        <h1 className="h-display text-[56px] md:text-[80px] mt-4">Cart kosong.</h1>
         <p className="mt-6 text-muted max-w-md">
-          Pilih jersey dulu — tiga campus tunggu kau pakai colors diorang.
+          Pilih jersey dulu — lengan pendek atau panjang, custom nama, smash habis.
         </p>
         <Link
           href="/jerseys"
           className="mt-10 inline-flex bg-ink text-canvas h-12 px-6 items-center gap-2 hover:bg-accent transition-colors"
         >
-          Browse the drop <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+          Browse jerseys <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
         </Link>
       </div>
     );
@@ -100,6 +100,9 @@ export function CheckoutClient() {
             productId: i.productId,
             size: i.size,
             quantity: i.quantity,
+            player_name: i.player_name,
+            player_number: i.player_number,
+            player_type: i.player_type,
           })),
         }),
       });
@@ -127,7 +130,7 @@ export function CheckoutClient() {
       if (!res.ok) throw new Error(json.error ?? 'Upload failed');
       setUploadResult(json);
       if (json.match) {
-        toast.success('Payment verified ');
+        toast.success('Payment verified');
         clear();
       } else {
         toast.message('Receipt received — pending manual review');
@@ -159,9 +162,9 @@ export function CheckoutClient() {
         </div>
         <div className="col-span-12 md:col-span-5 hidden md:flex items-center gap-2 md:justify-end text-[12px] font-mono uppercase tracking-[0.16em] text-muted">
           <Stepper active={step} step="review" label="01 Bag" />
-          <span className="text-line"></span>
+          <span>·</span>
           <Stepper active={step} step="details" label="02 Details" />
-          <span className="text-line"></span>
+          <span>·</span>
           <Stepper active={step} step="payment" label="03 Pay" />
         </div>
       </div>
@@ -172,7 +175,7 @@ export function CheckoutClient() {
             <div className="border border-line">
               {items.map((i) => (
                 <div
-                  key={`${i.productId}-${i.size}`}
+                  key={i.lineId}
                   className="flex gap-5 p-5 border-b border-line last:border-b-0"
                 >
                   <div className="relative w-24 h-28 bg-paper border border-line shrink-0">
@@ -182,9 +185,23 @@ export function CheckoutClient() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="text-[15px]">{i.name}</p>
-                        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted mt-1">
-                          Size {i.size}
-                        </p>
+                        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                          <span>Size {i.size}</span>
+                          {i.sleeve_type && <span>·</span>}
+                          {i.sleeve_type && (
+                            <span>{i.sleeve_type === 'short' ? 'Lengan pendek' : 'Lengan panjang'}</span>
+                          )}
+                          {i.player_name && <span>·</span>}
+                          {i.player_name && (
+                            <span className="text-ink">
+                              {i.player_name} #{i.player_number}
+                            </span>
+                          )}
+                          {i.player_type && <span>·</span>}
+                          {i.player_type && (
+                            <span>{i.player_type === 'player' ? 'Player' : 'Non-player'}</span>
+                          )}
+                        </div>
                       </div>
                       <p className="font-mono text-[14px]">{formatMYR(i.unit_price * i.quantity)}</p>
                     </div>
@@ -192,7 +209,7 @@ export function CheckoutClient() {
                       <div className="inline-flex border border-line">
                         <button
                           type="button"
-                          onClick={() => setQty(i.productId, i.size, i.quantity - 1)}
+                          onClick={() => setQty(i.lineId, i.quantity - 1)}
                           className="w-8 h-8 inline-flex items-center justify-center hover:bg-paper"
                           aria-label="Decrease"
                         >
@@ -203,7 +220,7 @@ export function CheckoutClient() {
                         </span>
                         <button
                           type="button"
-                          onClick={() => setQty(i.productId, i.size, i.quantity + 1)}
+                          onClick={() => setQty(i.lineId, i.quantity + 1)}
                           className="w-8 h-8 inline-flex items-center justify-center hover:bg-paper"
                           aria-label="Increase"
                         >
@@ -212,7 +229,7 @@ export function CheckoutClient() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => remove(i.productId, i.size)}
+                        onClick={() => remove(i.lineId)}
                         className="text-muted hover:text-accent text-[12px] inline-flex items-center gap-1"
                       >
                         <Trash2 className="w-3.5 h-3.5" strokeWidth={1.5} /> Remove
@@ -228,7 +245,7 @@ export function CheckoutClient() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <Label>Full name</Label>
+                  <Label>Nama penuh (orang yang tempah)</Label>
                   <Input
                     placeholder="Muhammad Hazim"
                     value={form.customer_name}
@@ -270,7 +287,7 @@ export function CheckoutClient() {
                         {m === 'pickup' ? '01 / Free' : `02 / +${formatMYR(SHIPPING_FEE)}`}
                       </p>
                       <p className="text-[15px] mt-2">
-                        {m === 'pickup' ? 'Self pickup · Dungun' : 'Courier · Semenanjung MY'}
+                        {m === 'pickup' ? 'Self pickup · UiTM KT' : 'Courier · Semenanjung MY'}
                       </p>
                     </button>
                   ))}
@@ -324,20 +341,19 @@ export function CheckoutClient() {
               </div>
 
               <div className="border border-line p-6 lg:p-8 bg-paper flex flex-col items-center text-center">
-                <p className="eyebrow">Or scan DuitNow QR</p>
+                <p className="eyebrow">Atau scan DuitNow QR</p>
                 <div className="relative w-56 h-56 mt-4 bg-canvas border border-line">
                   <Image src="/branding/qr_code.png" alt="DuitNow QR" fill className="object-contain p-3" />
                 </div>
                 <p className="mt-4 text-[13px] text-muted max-w-xs">
-                  Scan with any Malaysian banking app, transfer the exact amount, then upload the
-                  receipt below.
+                  Scan dengan banking app, transfer exact amount, then upload receipt below.
                 </p>
               </div>
 
               <div className="border border-line p-6 lg:p-8">
                 <p className="eyebrow">Upload receipt</p>
                 <p className="text-[13px] text-muted mt-2">
-                  Screenshot or photo of the transfer confirmation. We auto-verify with AI.
+                  Screenshot atau gambar receipt transfer. Auto-verify dengan AI.
                 </p>
 
                 <label className="mt-5 border border-dashed border-line hover:border-ink p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors">
@@ -379,9 +395,9 @@ export function CheckoutClient() {
                     </div>
                     <p className="mt-3 text-[13px] text-muted">
                       {uploadResult.match
-                        ? 'Your order is paid. We will update tracking once shipped.'
+                        ? 'Order kau dah paid. Kita update tracking bila shipped.'
                         : uploadResult.ocr.notes ||
-                          'Receipt did not auto-match — admin will verify manually within 24h.'}
+                          'Receipt tak auto-match — admin akan verify manual within 24h.'}
                     </p>
                     <Link
                       href={`/track?order=${order.order_number}`}
@@ -406,9 +422,10 @@ export function CheckoutClient() {
                 v={shipping ? formatMYR(shipping) : 'FREE'}
               />
               <div className="border-t border-line pt-3 mt-3">
-                <Row k={<span className="text-[15px]">Total</span>} v={
-                  <span className="text-[15px] font-mono">{formatMYR(total)}</span>
-                } />
+                <Row
+                  k={<span className="text-[15px]">Total</span>}
+                  v={<span className="text-[15px] font-mono">{formatMYR(total)}</span>}
+                />
               </div>
             </div>
 
@@ -417,7 +434,7 @@ export function CheckoutClient() {
                 type="button"
                 onClick={() => setStep('details')}
                 disabled={items.length === 0}
-                className="mt-8 w-full bg-ink text-canvas h-13 py-4 inline-flex items-center justify-between px-5 hover:bg-accent transition-colors disabled:opacity-50"
+                className="mt-8 w-full bg-ink text-canvas py-4 inline-flex items-center justify-between px-5 hover:bg-accent transition-colors disabled:opacity-50"
               >
                 Continue <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
               </button>
@@ -457,8 +474,8 @@ export function CheckoutClient() {
             )}
 
             <p className="mt-6 text-[12px] text-muted leading-relaxed">
-              Bank-transfer payment, AI-verified via Gemini OCR. If the receipt fails auto-match,
-              admin reviews manually within 24h.
+              Bank transfer + AI receipt verification (Gemini OCR). Kalau auto-match fail, admin
+              review manual within 24h.
             </p>
           </div>
         </div>
@@ -481,11 +498,7 @@ function Stepper({ active, step, label }: { active: Step; step: Step; label: str
   const isPast = order.indexOf(active) > order.indexOf(step);
   const isActive = active === step;
   return (
-    <span
-      className={`px-2 py-1 ${
-        isActive ? 'text-ink' : isPast ? 'text-muted line-through' : 'text-muted'
-      }`}
-    >
+    <span className={`px-2 py-1 ${isActive ? 'text-ink' : isPast ? 'text-muted line-through' : 'text-muted'}`}>
       {label}
     </span>
   );
