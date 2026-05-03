@@ -125,51 +125,40 @@ export default async function Home() {
             drop.
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line">
-            {products.map((p, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-line border border-line">
+            {products.map((p) => (
               <Link
                 key={p.id}
                 href={`/jerseys/${p.slug}`}
-                className="group bg-canvas p-5 lg:p-7 flex flex-col"
+                className="group bg-canvas p-3 sm:p-4 flex flex-col"
               >
-                <div className="aspect-[4/5] relative overflow-hidden bg-paper">
+                <div className="aspect-square relative overflow-hidden bg-paper">
                   <Image
                     src={p.image_url}
                     alt={p.name}
                     fill
                     className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
-                    sizes="(max-width: 768px) 50vw, 25vw"
+                    sizes="(max-width: 640px) 50vw, 25vw"
                   />
                   {p.stock < 10 && p.stock > 0 && (
-                    <span className="absolute top-3 left-3 bg-flame-red text-white px-2 py-1 text-[10px] font-mono uppercase tracking-[0.16em]">
-                      Low stock
+                    <span className="absolute top-2 left-2 bg-flame-red text-white px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.14em]">
+                      Low
                     </span>
                   )}
                   {p.stock === 0 && (
-                    <span className="absolute top-3 left-3 bg-ink text-canvas px-2 py-1 text-[10px] font-mono uppercase tracking-[0.16em]">
+                    <span className="absolute top-2 left-2 bg-ink text-canvas px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.14em]">
                       Sold out
                     </span>
                   )}
                 </div>
-                <div className="mt-5 flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-                      {String(i + 1).padStart(2, '0')} / {p.color} /{' '}
-                      {p.sleeve_type === 'short' ? 'Short' : 'Long'}
-                    </p>
-                    <p className="text-[14px] mt-2 font-heading font-bold leading-tight">
-                      {p.name}
-                    </p>
-                  </div>
-                  <p className="font-mono text-[14px] whitespace-nowrap">{formatMYR(p.price)}</p>
+                <div className="mt-3 flex items-baseline justify-between gap-2">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted truncate">
+                    {p.color} / {p.sleeve_type === 'short' ? 'Short' : 'Long'}
+                  </p>
+                  <p className="font-mono text-[12px] whitespace-nowrap group-hover:text-flame-red transition-colors">
+                    {formatMYR(p.price)}
+                  </p>
                 </div>
-                <p className="mt-3 text-[12px] text-muted inline-flex items-center gap-1.5 group-hover:text-flame-red transition-colors">
-                  Order and customize
-                  <ArrowRight
-                    className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"
-                    strokeWidth={1.5}
-                  />
-                </p>
               </Link>
             ))}
           </div>
