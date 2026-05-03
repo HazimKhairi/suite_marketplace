@@ -137,10 +137,10 @@ export function CheckoutClient() {
       if (!res.ok) throw new Error(json.error ?? 'Upload failed');
       setUploadResult(json);
       if (json.match) {
-        toast.success('Payment verified');
+        toast.success('Receipt received. Pending admin review.');
         clear();
       } else {
-        toast.message('Receipt received. Pending manual review.');
+        toast.message('Receipt received. Pending admin review.');
       }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Upload failed');
@@ -458,7 +458,7 @@ export function CheckoutClient() {
                       />
                       <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
                         {uploadResult.match
-                          ? 'Verified. Payment confirmed.'
+                          ? 'Receipt received. Pending admin review.'
                           : 'Amount does not match.'}
                       </p>
                     </div>
@@ -466,8 +466,9 @@ export function CheckoutClient() {
                     {uploadResult.match ? (
                       <>
                         <p className="mt-3 body-lede text-[14px] text-ink-soft">
-                          Your order is paid. We will email you when it is ready for self pickup at
-                          UiTM KT.
+                          Auto-check looks good. Our admin verifies every receipt against the
+                          uploaded image and will email you the confirmation, usually within 24
+                          hours.
                         </p>
                         <Link
                           href={`/track?order=${order.order_number}`}

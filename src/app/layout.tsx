@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${inter.variable} ${montserrat.variable} ${openSans.variable} ${lato.variable} ${roboto.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-canvas text-ink">
+      <body className="min-h-full flex flex-col bg-canvas text-ink overflow-x-clip">
         <CartProvider>
           <Header />
           <main className="flex-1">{children}</main>

@@ -72,7 +72,10 @@ export async function POST(
   const ocr = await extractReceipt(buf, expectedHolder);
 
   const match = matchReceipt(ocr, Number(order.total_amount), expectedHolder);
-  const newStatus = match ? 'paid' : 'verifying';
+  // Status is ALWAYS verifying after upload, even when the OCR matches. The admin is the
+  // source of truth for "paid" so receipts can be reviewed against the actual image rather
+  // than the auto-match alone.
+  const newStatus: 'verifying' = 'verifying';
 
   const { error: updErr } = await supabase
     .from('orders')
