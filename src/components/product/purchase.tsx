@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
@@ -28,12 +28,24 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
   );
 
   // Filter sizes: prefer the product.sizes array if available
-  const availableSizes = product.sizes?.length
-    ? SIZES.filter((s) => product.sizes.includes(s))
-    : SIZES.slice();
+  const availableSizes = useMemo<string[]>(
+    () =>
+      product.sizes?.length
+        ? SIZES.filter((s) => product.sizes.includes(s))
+        : Array.from(SIZES),
+    [product.sizes],
+  );
 
   const [size, setSize] = useState<string>(availableSizes[1] ?? availableSizes[0]);
   const [qty, setQty] = useState(1);
+
+  // When the parent swaps to a sibling variant, keep size selection if still valid;
+  // otherwise fall back to the variant's default so the form never carries a ghost size.
+  useEffect(() => {
+    if (!availableSizes.includes(size)) {
+      setSize(availableSizes[1] ?? availableSizes[0]);
+    }
+  }, [product.id, availableSizes, size]);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const [playerType, setPlayerType] = useState<PlayerType>('player');
@@ -90,9 +102,6 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
     setTimeout(() => setAdding(false), 250);
     if (navigate) {
       router.push('/checkout');
-    } else if (!isJacket) {
-      setName('');
-      setNumber('');
     }
   }
 
@@ -264,13 +273,13 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
           disabled={outOfStock || adding || numberConflict}
           className="border border-line h-12 px-6 inline-flex items-center justify-center gap-2 hover:border-ink transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-[14px] font-heading"
         >
-          {isJacket ? 'Add to cart' : 'Add another player'}
+          {isJacket ? 'Add to cart' : 'Add another line'}
           <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
         </button>
         {!isJacket && (
           <p className="text-[12px] text-muted body-lede">
-            Need two sizes for the same player. Click <em>Add another player</em>, switch the size,
-            then add to cart again.
+            Need extra lines for the same player. Click <em>Add another line</em>, switch sleeve or
+            size, then add again. Name and number stay locked in.
           </p>
         )}
       </div>
