@@ -377,15 +377,16 @@ export function CheckoutClient() {
 
               <div className="border border-line p-6 lg:p-8 bg-paper flex flex-col items-center text-center">
                 <p className="eyebrow">Or scan DuitNow QR</p>
-                <div className="relative w-56 h-56 mt-4 bg-canvas border border-line">
+                <div className="relative w-full max-w-sm aspect-[3/4] mt-5 bg-canvas border border-line">
                   <Image
                     src="/branding/qr_code.png"
                     alt="DuitNow QR"
                     fill
-                    className="object-contain p-3"
+                    className="object-contain p-2"
+                    sizes="(max-width: 768px) 100vw, 384px"
                   />
                 </div>
-                <p className="mt-4 body-lede text-[13px] text-muted max-w-xs">
+                <p className="mt-5 body-lede text-[13px] text-muted max-w-sm">
                   Scan with any banking app, transfer the exact amount, then upload the receipt
                   below.
                 </p>
