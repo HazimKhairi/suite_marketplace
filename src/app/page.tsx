@@ -82,18 +82,18 @@ export default async function Home() {
                     Custom name
                   </span>
                 </div>
-                <div className="absolute bottom-5 left-5 right-5">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-canvas/85">
-                    {TEAM.fullName}
-                  </p>
-                  <p className="font-display font-extrabold text-canvas text-2xl mt-1">
-                    Wear the team. Make it yours.
-                  </p>
-                </div>
               </div>
-              <div className="mt-4 flex items-center justify-between text-[12px] font-mono uppercase tracking-[0.14em] text-muted">
-                <span>VB / UITM KT</span>
-                <span>SS / 26</span>
+              <div className="mt-5 border-t border-line pt-4">
+                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                  {TEAM.fullName}
+                </p>
+                <p className="font-display font-extrabold text-2xl mt-2 leading-tight">
+                  Wear the team. Make it yours.
+                </p>
+                <div className="mt-4 flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.16em] text-muted">
+                  <span>VB / UITM KT</span>
+                  <span>SS / 26</span>
+                </div>
               </div>
             </div>
           </div>
