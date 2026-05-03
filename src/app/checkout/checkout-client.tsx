@@ -4,12 +4,14 @@ import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Check, Minus, Plus, Trash2, Upload } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, MessageCircle, Minus, Plus, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCart } from '@/lib/cart';
 import { formatMYR } from '@/lib/utils';
 import { effectiveUnitPrice, surchargeLabel } from '@/lib/pricing';
 import { Input, Label } from '@/components/ui/input';
+import { ORG_CONTACT } from '@/lib/teams';
+import type { OcrResult } from '@/lib/types';
 
 type Step = 'review' | 'details' | 'payment';
 
@@ -42,7 +44,7 @@ export function CheckoutClient() {
   );
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState<
-    | { match: boolean; status: string; ocr: { notes?: string } }
+    | { match: boolean; status: string; ocr: OcrResult }
     | null
   >(null);
 
@@ -366,30 +368,32 @@ export function CheckoutClient() {
                   Screenshot or photo of the transfer confirmation. Auto verified by AI.
                 </p>
 
-                <label className="mt-5 border border-dashed border-line hover:border-ink p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors">
-                  <Upload className="w-6 h-6 text-muted" strokeWidth={1.5} />
-                  <p className="mt-3 text-[14px] font-heading">
-                    {uploading ? 'Verifying with Gemini' : 'Click to choose an image'}
-                  </p>
-                  <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-                    JPG, PNG, WEBP. Max 8 MB.
-                  </p>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    disabled={uploading}
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) uploadReceipt(f);
-                    }}
-                  />
-                </label>
+                {!uploadResult && (
+                  <label className="mt-5 border border-dashed border-line hover:border-ink p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors">
+                    <Upload className="w-6 h-6 text-muted" strokeWidth={1.5} />
+                    <p className="mt-3 text-[14px] font-heading">
+                      {uploading ? 'Verifying with Gemini' : 'Click to choose an image'}
+                    </p>
+                    <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+                      JPG, PNG, WEBP. Max 8 MB.
+                    </p>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={uploading}
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) uploadReceipt(f);
+                      }}
+                    />
+                  </label>
+                )}
 
                 {uploadResult && (
                   <div
-                    className={`mt-5 border p-5 ${
-                      uploadResult.match ? 'border-leaf' : 'border-flame-red'
+                    className={`mt-5 border p-6 ${
+                      uploadResult.match ? 'border-leaf bg-leaf/5' : 'border-flame-red bg-flame-red/5'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -402,21 +406,72 @@ export function CheckoutClient() {
                       <p className="font-mono text-[11px] uppercase tracking-[0.16em]">
                         {uploadResult.match
                           ? 'Verified. Payment confirmed.'
-                          : 'Pending manual review.'}
+                          : 'Amount does not match.'}
                       </p>
                     </div>
-                    <p className="mt-3 body-lede text-[13px] text-muted">
-                      {uploadResult.match
-                        ? 'Your order is paid. We will email you when it ships.'
-                        : uploadResult.ocr.notes ||
-                          'Receipt did not auto match. Admin will verify within 24 hours.'}
-                    </p>
-                    <Link
-                      href={`/track?order=${order.order_number}`}
-                      className="mt-4 inline-flex items-center gap-2 text-[13px] hover:text-flame-red"
-                    >
-                      Track order <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
-                    </Link>
+
+                    {uploadResult.match ? (
+                      <>
+                        <p className="mt-3 body-lede text-[14px] text-ink-soft">
+                          Your order is paid. We will email you when it is ready for self pickup at
+                          UiTM KT.
+                        </p>
+                        <Link
+                          href={`/track?order=${order.order_number}`}
+                          className="mt-6 inline-flex items-center gap-2 bg-ink text-canvas h-12 px-6 hover:bg-flame-red transition-colors text-[14px] font-heading font-semibold"
+                        >
+                          Track order
+                          <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <div className="mt-4 grid grid-cols-2 gap-4 border-t border-flame-red/30 pt-4">
+                          <div>
+                            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+                              Detected
+                            </p>
+                            <p className="mt-1 font-mono text-[14px]">
+                              {uploadResult.ocr.detected_amount != null
+                                ? formatMYR(uploadResult.ocr.detected_amount)
+                                : 'Not detected'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+                              Expected
+                            </p>
+                            <p className="mt-1 font-mono text-[14px]">
+                              {formatMYR(Number(order.total_amount))}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="mt-4 body-lede text-[13px] text-ink-soft">
+                          {uploadResult.ocr.notes ||
+                            'We could not auto-match your transfer with the order total.'}{' '}
+                          Please WhatsApp the admin with this order number for the fastest help.
+                        </p>
+                        <a
+                          href={`${ORG_CONTACT.whatsappUrl}?text=${encodeURIComponent(
+                            `Hi admin, I uploaded a receipt for order ${order.order_number} but the auto-check did not match. Need help confirming my payment.`,
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-6 inline-flex items-center gap-2 bg-flame-red text-canvas h-12 px-6 hover:bg-ink transition-colors text-[14px] font-heading font-semibold"
+                        >
+                          <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
+                          WhatsApp admin
+                        </a>
+                        <div className="mt-4">
+                          <Link
+                            href={`/track?order=${order.order_number}`}
+                            className="inline-flex items-center gap-2 text-[13px] text-muted hover:text-ink"
+                          >
+                            Track order <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+                          </Link>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
