@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, MessageCircle } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/server';
-import { ORG_CONTACT } from '@/lib/teams';
+import { TEAM, ORG_CONTACT } from '@/lib/teams';
 import { formatMYR } from '@/lib/utils';
 import type { Product } from '@/lib/types';
 
@@ -29,57 +29,73 @@ export default async function Home() {
   return (
     <div>
       <section className="relative">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 lg:pt-20 pb-12 lg:pb-16">
-          <div className="max-w-4xl">
-            <p className="eyebrow rise">Suite Games 2026 / Volleyball / UiTM Kuala Terengganu</p>
-            <h1 className="h-display rise rise-2 text-[64px] sm:text-[112px] lg:text-[180px] mt-6">
-              Smash in
-              <br />
-              <span className="text-flame-red">your</span> name.
-            </h1>
-            <p className="rise rise-3 mt-8 max-w-xl body-lede text-[18px] text-ink-soft">
-              The official volleyball kit of UiTM Kuala Terengganu, printed with your own name
-              and number. Short sleeve at RM 28 or long sleeve at RM 33. Pick your size, drop
-              your name on the back, hit the court.
-            </p>
-            <div className="rise rise-4 mt-10 flex flex-wrap items-center gap-4">
-              <Link
-                href="/jerseys"
-                className="bg-ink text-canvas h-14 px-8 inline-flex items-center gap-3 hover:bg-flame-red transition-colors text-[15px] font-heading font-semibold"
-              >
-                Order your jersey
-                <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
-              </Link>
-              <Link
-                href="#catalog"
-                className="border border-line h-14 px-8 inline-flex items-center hover:border-ink text-[15px] font-heading"
-              >
-                Browse the drop
-              </Link>
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 lg:pt-20 pb-24 lg:pb-32">
+          <div className="grid grid-cols-12 gap-6 lg:gap-12 items-end">
+            <div className="col-span-12 lg:col-span-7">
+              <p className="eyebrow rise">Suite Games 2026 / Volleyball / UiTM Kuala Terengganu</p>
+              <h1 className="h-display rise rise-2 text-[64px] sm:text-[112px] lg:text-[180px] mt-6">
+                Smash in
+                <br />
+                <span className="text-flame-red">your</span> name.
+              </h1>
+              <p className="rise rise-3 mt-8 max-w-xl body-lede text-[18px] text-ink-soft">
+                The official volleyball kit of UiTM Kuala Terengganu, printed with your own name
+                and number. Short sleeve at RM 28 or long sleeve at RM 33. Pick your size, drop
+                your name on the back, hit the court.
+              </p>
+              <div className="rise rise-4 mt-10 flex flex-wrap items-center gap-4">
+                <Link
+                  href="/jerseys"
+                  className="bg-ink text-canvas h-14 px-8 inline-flex items-center gap-3 hover:bg-flame-red transition-colors text-[15px] font-heading font-semibold"
+                >
+                  Order your jersey
+                  <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+                </Link>
+                <Link
+                  href="#catalog"
+                  className="border border-line h-14 px-8 inline-flex items-center hover:border-ink text-[15px] font-heading"
+                >
+                  Browse the drop
+                </Link>
+              </div>
+              <div className="rise rise-5 mt-14 grid grid-cols-2 sm:grid-cols-4 gap-y-8 max-w-2xl">
+                <Stat n="01" k="Short sleeve" v="RM 28" tint="text-flame-red" />
+                <Stat n="02" k="Long sleeve" v="RM 33" tint="text-flame-purple" />
+                <Stat n="03" k="Custom" v="Name and number" tint="text-gold" />
+                <Stat n="04" k="Print" v="Sublimation" tint="text-leaf" />
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div className="rise rise-5 max-w-[1440px] mx-auto px-6 lg:px-10 pb-12 lg:pb-16">
-          <div className="relative w-full">
-            <Image
-              src="/hero/team_cutout.png"
-              alt="UiTM Kuala Terengganu volleyball squad in their match jerseys"
-              width={1024}
-              height={572}
-              priority
-              className="w-full h-auto drop-shadow-[0_30px_30px_rgba(12,12,13,0.18)]"
-              sizes="(max-width: 1440px) 100vw, 1440px"
-            />
-          </div>
-        </div>
-
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16 lg:pb-24">
-          <div className="rise rise-6 grid grid-cols-2 sm:grid-cols-4 gap-y-8 border-t border-line pt-10">
-            <Stat n="01" k="Short sleeve" v="RM 28" tint="text-flame-red" />
-            <Stat n="02" k="Long sleeve" v="RM 33" tint="text-flame-purple" />
-            <Stat n="03" k="Custom" v="Name and number" tint="text-gold" />
-            <Stat n="04" k="Print" v="Sublimation" tint="text-leaf" />
+            <div className="col-span-12 lg:col-span-5">
+              <div className="relative aspect-[4/5] bg-paper border border-line overflow-hidden rise rise-3">
+                <Image
+                  src="/jerseys/jersey_black.png"
+                  alt="VB UiTM KT jersey"
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 600px"
+                />
+                <div className="absolute top-5 left-5 right-5 flex items-start justify-between">
+                  <span className="eyebrow bg-canvas/90 px-2 py-1">Drop / 01</span>
+                  <span className="bg-flame-red text-white px-2 py-1 text-[11px] font-mono uppercase tracking-[0.14em]">
+                    Custom name
+                  </span>
+                </div>
+              </div>
+              <div className="mt-5 border-t border-line pt-4">
+                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                  {TEAM.fullName}
+                </p>
+                <p className="font-display font-extrabold text-2xl mt-2 leading-tight">
+                  Wear the team. Make it yours.
+                </p>
+                <div className="mt-4 flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.16em] text-muted">
+                  <span>VB / UITM KT</span>
+                  <span>SS / 26</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
