@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Minus, Plus, ShoppingBag } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCart } from '@/lib/cart';
 import { formatMYR } from '@/lib/utils';
@@ -18,7 +17,6 @@ type Props = {
 };
 
 export function ProductPurchase({ product, takenPlayers = [] }: Props) {
-  const router = useRouter();
   const { add } = useCart();
   const isJacket = product.category === 'jacket';
 
@@ -86,7 +84,7 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
     };
   }
 
-  function handleAdd(navigate: boolean) {
+  function handleAdd() {
     if (outOfStock) return;
     if (errors.length > 0) {
       toast.error(`Please fill: ${errors.join(', ')}`);
@@ -100,9 +98,6 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
         : `Added ${name.toUpperCase()} #${number}, size ${size}, qty ${qty}`,
     );
     setTimeout(() => setAdding(false), 250);
-    if (navigate) {
-      router.push('/checkout');
-    }
   }
 
   return (
@@ -254,7 +249,7 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
       <div className="flex flex-col gap-3 pt-2">
         <button
           type="button"
-          onClick={() => handleAdd(true)}
+          onClick={handleAdd}
           disabled={outOfStock || adding || numberConflict}
           className="bg-ink text-canvas h-14 px-6 inline-flex items-center justify-between hover:bg-flame-red transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-heading font-semibold"
         >
@@ -263,23 +258,15 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
               ? 'Sold out'
               : numberConflict
                 ? `Number ${trimmedNumber} taken`
-                : `Buy now / ${formatMYR(unit * qty)}`}
+                : `Add to cart / ${formatMYR(unit * qty)}`}
           </span>
           <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />
         </button>
-        <button
-          type="button"
-          onClick={() => handleAdd(false)}
-          disabled={outOfStock || adding || numberConflict}
-          className="border border-line h-12 px-6 inline-flex items-center justify-center gap-2 hover:border-ink transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-[14px] font-heading"
-        >
-          {isJacket ? 'Add to cart' : 'Add another line'}
-          <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
-        </button>
         {!isJacket && (
           <p className="text-[12px] text-muted body-lede">
-            Need extra lines for the same player. Click <em>Add another line</em>, switch sleeve or
-            size, then add again. Name and number stay locked in.
+            Need extra lines for the same player. Switch sleeve or size, then click{' '}
+            <em>Add to cart</em> again. Name and number stay locked in. Head to the cart from the
+            nav when you are ready to check out.
           </p>
         )}
       </div>
