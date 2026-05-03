@@ -8,6 +8,7 @@ export const maxDuration = 60;
 
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
 const MAX_BYTES = 8 * 1024 * 1024;
+const MAX_ATTEMPTS = 5;
 
 export async function POST(
   req: NextRequest,
@@ -35,8 +36,23 @@ export async function POST(
     .maybeSingle();
 
   if (oErr || !order) return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-  if (!['pending_payment', 'rejected'].includes(order.status)) {
+  if (!['pending_payment', 'verifying', 'rejected'].includes(order.status)) {
     return NextResponse.json({ error: 'Order already processed' }, { status: 409 });
+  }
+
+  // Cap how many times a customer can resubmit a receipt before we hand them off to
+  // the admin manually. Counted by listing the per-order folder in the receipts bucket.
+  const { data: priorFiles } = await supabase.storage.from('receipts').list(id, { limit: 100 });
+  const priorCount = priorFiles?.length ?? 0;
+  if (priorCount >= MAX_ATTEMPTS) {
+    return NextResponse.json(
+      {
+        error: `Maximum ${MAX_ATTEMPTS} upload attempts reached. Please WhatsApp the admin with this order number for manual verification.`,
+        attempts_used: priorCount,
+        attempts_remaining: 0,
+      },
+      { status: 429 },
+    );
   }
 
   const ext = file.name.split('.').pop() ?? 'jpg';
@@ -48,6 +64,9 @@ export async function POST(
     .upload(path, buf, { contentType: file.type, upsert: false });
 
   if (upErr) return NextResponse.json({ error: upErr.message }, { status: 500 });
+
+  const attemptsUsed = priorCount + 1;
+  const attemptsRemaining = MAX_ATTEMPTS - attemptsUsed;
 
   const expectedHolder = process.env.NEXT_PUBLIC_BANK_HOLDER ?? 'MUHAMMAD HAZIM';
   const ocr = await extractReceipt(buf, expectedHolder);
@@ -102,5 +121,11 @@ export async function POST(
     console.error('Admin notification failed:', e);
   }
 
-  return NextResponse.json({ ocr, match, status: newStatus });
+  return NextResponse.json({
+    ocr,
+    match,
+    status: newStatus,
+    attempts_used: attemptsUsed,
+    attempts_remaining: attemptsRemaining,
+  });
 }

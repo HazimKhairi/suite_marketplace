@@ -45,9 +45,17 @@ export function CheckoutClient() {
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadResult, setUploadResult] = useState<
-    | { match: boolean; status: string; ocr: OcrResult }
+    | {
+        match: boolean;
+        status: string;
+        ocr: OcrResult;
+        attempts_used: number;
+        attempts_remaining: number;
+      }
     | null
   >(null);
+
+  const MAX_RECEIPT_ATTEMPTS = 5;
 
   const total = subtotal;
 
@@ -349,18 +357,25 @@ export function CheckoutClient() {
                 </div>
               </div>
 
-              <div className="border border-line p-6 lg:p-8 bg-paper flex flex-col items-center text-center">
+              <div className="border border-line p-6 lg:p-10 bg-paper flex flex-col items-center text-center">
                 <p className="eyebrow">Or scan DuitNow QR</p>
-                <div className="relative w-full max-w-sm aspect-[3/4] mt-5 bg-canvas border border-line">
-                  <Image
-                    src="/branding/qr_code.png"
-                    alt="DuitNow QR"
-                    fill
-                    className="object-contain p-2"
-                    sizes="(max-width: 768px) 100vw, 384px"
-                  />
+                <div className="relative mt-8 w-full max-w-[480px]">
+                  <div className="relative aspect-square bg-canvas border border-line p-3 sm:p-5">
+                    <Image
+                      src="/branding/qr_code.png"
+                      alt="DuitNow QR"
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 768px) 90vw, 480px"
+                    />
+                  </div>
+                  <span
+                    className="absolute -top-4 -right-3 sm:-top-5 sm:-right-5 bg-flame-red text-canvas px-4 py-2 font-mono text-[11px] sm:text-[12px] uppercase tracking-[0.22em] -rotate-[8deg] shadow-[0_8px_24px_rgba(12,12,13,0.22)] select-none"
+                  >
+                    Scan me to pay
+                  </span>
                 </div>
-                <p className="mt-5 body-lede text-[13px] text-muted max-w-sm">
+                <p className="mt-8 body-lede text-[13px] text-muted max-w-sm">
                   Scan with any banking app, transfer the exact amount, then upload the receipt
                   below.
                 </p>
@@ -484,22 +499,61 @@ export function CheckoutClient() {
                             </p>
                           </div>
                         </div>
-                        <p className="mt-4 body-lede text-[13px] text-ink-soft">
+                        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-flame-red">
+                          Attempt {uploadResult.attempts_used} of {MAX_RECEIPT_ATTEMPTS}
+                          {uploadResult.attempts_remaining > 0
+                            ? ` · ${uploadResult.attempts_remaining} retry${
+                                uploadResult.attempts_remaining === 1 ? '' : 's'
+                              } left`
+                            : ' · Limit reached'}
+                        </p>
+                        <p className="mt-3 body-lede text-[13px] text-ink-soft">
                           {uploadResult.ocr.notes ||
                             'We could not auto-match your transfer with the order total.'}{' '}
-                          Please WhatsApp the admin with this order number for the fastest help.
+                          {uploadResult.attempts_remaining > 0
+                            ? 'Try a sharper screenshot of the official bank confirmation, or WhatsApp the admin if you are stuck.'
+                            : 'You have used all 5 attempts. WhatsApp the admin with this order number for manual verification.'}
                         </p>
-                        <a
-                          href={`${ORG_CONTACT.whatsappUrl}?text=${encodeURIComponent(
-                            `Hi admin, I uploaded a receipt for order ${order.order_number} but the auto-check did not match. Need help confirming my payment.`,
-                          )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-6 inline-flex items-center gap-2 bg-flame-red text-canvas h-12 px-6 hover:bg-ink transition-colors text-[14px] font-heading font-semibold"
-                        >
-                          <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
-                          WhatsApp admin
-                        </a>
+
+                        {uploadResult.attempts_remaining > 0 ? (
+                          <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setUploadResult(null);
+                                setSelectedFile(null);
+                              }}
+                              className="inline-flex items-center justify-center gap-2 bg-ink text-canvas h-12 px-6 hover:bg-flame-red transition-colors text-[14px] font-heading font-semibold"
+                            >
+                              <Upload className="w-4 h-4" strokeWidth={1.5} />
+                              Try another receipt
+                            </button>
+                            <a
+                              href={`${ORG_CONTACT.whatsappUrl}?text=${encodeURIComponent(
+                                `Hi admin, I uploaded a receipt for order ${order.order_number} but the auto-check did not match. Need help confirming my payment.`,
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center gap-2 border border-flame-red text-flame-red h-12 px-6 hover:bg-flame-red hover:text-canvas transition-colors text-[14px] font-heading font-semibold"
+                            >
+                              <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
+                              WhatsApp admin
+                            </a>
+                          </div>
+                        ) : (
+                          <a
+                            href={`${ORG_CONTACT.whatsappUrl}?text=${encodeURIComponent(
+                              `Hi admin, I have used all 5 receipt upload attempts for order ${order.order_number}. Please verify my payment manually.`,
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-6 inline-flex items-center gap-2 bg-flame-red text-canvas h-12 px-6 hover:bg-ink transition-colors text-[14px] font-heading font-semibold"
+                          >
+                            <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
+                            WhatsApp admin
+                          </a>
+                        )}
+
                         <div className="mt-4">
                           <Link
                             href={`/track?order=${order.order_number}`}
