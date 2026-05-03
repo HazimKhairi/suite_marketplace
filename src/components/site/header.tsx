@@ -9,7 +9,7 @@ export function Header() {
       <div className="max-w-[1440px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Logo size="sm" />
-          <span className="eyebrow hidden sm:inline-block">VB / UiTM KT</span>
+          <span className="eyebrow hidden sm:inline-block">Suit up.</span>
         </div>
         <nav className="flex items-center gap-7 text-[13px] font-heading">
           <Link href="/jerseys" className="hover:text-flame-red transition-colors">
