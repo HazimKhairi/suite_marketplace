@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
@@ -10,11 +10,22 @@ import { effectiveUnitPrice, sizeSurcharge, surchargeLabel, SIZES } from '@/lib/
 import { Input, Label } from '@/components/ui/input';
 import type { Product, CartItem } from '@/lib/types';
 import type { PlayerType } from '@/lib/teams';
+import type { TakenPlayer } from '@/lib/players';
 
-export function ProductPurchase({ product }: { product: Product }) {
+type Props = {
+  product: Product;
+  takenPlayers?: TakenPlayer[];
+};
+
+export function ProductPurchase({ product, takenPlayers = [] }: Props) {
   const router = useRouter();
   const { add } = useCart();
   const isJacket = product.category === 'jacket';
+
+  const takenMap = useMemo(
+    () => new Map(takenPlayers.map((p) => [p.number, p.name])),
+    [takenPlayers],
+  );
 
   // Filter sizes: prefer the product.sizes array if available
   const availableSizes = product.sizes?.length
@@ -33,10 +44,17 @@ export function ProductPurchase({ product }: { product: Product }) {
   const surcharge = sizeSurcharge(size);
   const unit = effectiveUnitPrice(Number(product.price), size);
 
+  const trimmedNumber = number.trim();
+  const trimmedName = name.trim().toUpperCase();
+  const existingClaimant =
+    !isJacket && playerType === 'player' && trimmedNumber ? takenMap.get(trimmedNumber) : undefined;
+  const numberConflict = !!existingClaimant && existingClaimant !== trimmedName;
+
   const errors: string[] = [];
   if (!isJacket) {
     if (name.trim().length < 2) errors.push('Player name (minimum 2 letters)');
-    if (!/^[0-9]{1,3}$/.test(number.trim())) errors.push('Player number (1 to 3 digits)');
+    if (!/^[0-9]{1,3}$/.test(trimmedNumber)) errors.push('Player number (1 to 3 digits)');
+    if (numberConflict) errors.push(`Number ${trimmedNumber} is taken by ${existingClaimant}`);
   }
 
   function build(): Omit<CartItem, 'lineId'> {
@@ -126,7 +144,25 @@ export function ProductPurchase({ product }: { product: Product }) {
                 </button>
               ))}
             </div>
+            <p className="mt-2 text-[12px] text-muted body-lede">
+              Only volleyball players need a unique squad number. Non players can share any digit.
+            </p>
           </div>
+
+          {numberConflict && existingClaimant && (
+            <div className="border border-flame-red bg-flame-red/5 p-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-flame-red">
+                Number taken
+              </p>
+              <p className="mt-2 text-[14px] font-heading">
+                #{trimmedNumber} has been claimed by{' '}
+                <span className="bg-ink text-canvas px-2 py-0.5 font-mono text-[12px]">
+                  {existingClaimant}
+                </span>
+                . Pick another number, or switch to <em>Non player</em> if you are not on the squad.
+              </p>
+            </div>
+          )}
         </>
       )}
 
@@ -210,19 +246,23 @@ export function ProductPurchase({ product }: { product: Product }) {
         <button
           type="button"
           onClick={() => handleAdd(true)}
-          disabled={outOfStock || adding}
+          disabled={outOfStock || adding || numberConflict}
           className="bg-ink text-canvas h-14 px-6 inline-flex items-center justify-between hover:bg-flame-red transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-heading font-semibold"
         >
           <span className="text-[15px]">
-            {outOfStock ? 'Sold out' : `Buy now / ${formatMYR(unit * qty)}`}
+            {outOfStock
+              ? 'Sold out'
+              : numberConflict
+                ? `Number ${trimmedNumber} taken`
+                : `Buy now / ${formatMYR(unit * qty)}`}
           </span>
           <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />
         </button>
         <button
           type="button"
           onClick={() => handleAdd(false)}
-          disabled={outOfStock || adding}
-          className="border border-line h-12 px-6 inline-flex items-center justify-center gap-2 hover:border-ink transition-colors disabled:opacity-50 text-[14px] font-heading"
+          disabled={outOfStock || adding || numberConflict}
+          className="border border-line h-12 px-6 inline-flex items-center justify-center gap-2 hover:border-ink transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-[14px] font-heading"
         >
           {isJacket ? 'Add to cart' : 'Add another player'}
           <ArrowRight className="w-4 h-4" strokeWidth={1.5} />

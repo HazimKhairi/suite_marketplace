@@ -3,6 +3,8 @@ import { createAdminClient } from '@/lib/supabase/server';
 import { checkoutSchema } from '@/lib/checkout';
 import { effectiveUnitPrice, sizeSurcharge } from '@/lib/pricing';
 import { sendOrderEmail } from '@/lib/email';
+import { ACTIVE_PLAYER_STATUSES } from '@/lib/players';
+import type { OrderStatus } from '@/lib/types';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -24,7 +26,59 @@ export async function POST(req: Request) {
   }
   const data = parsed.data;
 
+  // Validate that no two cart lines claim the same player number with different names.
+  const intraOrderPlayers = new Map<string, string>();
+  for (const item of data.items) {
+    if (item.player_type !== 'player') continue;
+    if (!item.player_number || !item.player_name) continue;
+    const num = item.player_number.trim();
+    const nm = item.player_name.trim().toUpperCase();
+    const existing = intraOrderPlayers.get(num);
+    if (existing && existing !== nm) {
+      return NextResponse.json(
+        { error: `Number ${num} cannot be assigned to two different players in the same order` },
+        { status: 400 },
+      );
+    }
+    intraOrderPlayers.set(num, nm);
+  }
+
   const supabase = createAdminClient();
+
+  // Cross-order conflict: another customer already claimed this number as a player.
+  if (intraOrderPlayers.size > 0) {
+    const numbers = Array.from(intraOrderPlayers.keys());
+    const { data: existingClaims } = await supabase
+      .from('order_items')
+      .select('player_name, player_number, orders!inner(status)')
+      .eq('player_type', 'player')
+      .in('player_number', numbers);
+
+    type Row = {
+      player_name: string | null;
+      player_number: string | null;
+      orders: { status: OrderStatus } | { status: OrderStatus }[] | null;
+    };
+
+    const seen = new Map<string, string>();
+    for (const raw of (existingClaims ?? []) as unknown as Row[]) {
+      const status = Array.isArray(raw.orders) ? raw.orders[0]?.status : raw.orders?.status;
+      if (!status || !ACTIVE_PLAYER_STATUSES.includes(status)) continue;
+      if (!raw.player_number || !raw.player_name) continue;
+      const num = raw.player_number.trim();
+      if (!seen.has(num)) seen.set(num, raw.player_name.trim().toUpperCase());
+    }
+
+    for (const [num, nm] of intraOrderPlayers) {
+      const claimed = seen.get(num);
+      if (claimed && claimed !== nm) {
+        return NextResponse.json(
+          { error: `Number ${num} is already taken by ${claimed}` },
+          { status: 400 },
+        );
+      }
+    }
+  }
   const ids = Array.from(new Set(data.items.map((i) => i.productId)));
   const { data: products, error: pErr } = await supabase
     .from('products')

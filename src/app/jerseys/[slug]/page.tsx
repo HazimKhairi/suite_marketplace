@@ -5,10 +5,12 @@ import { ArrowLeft } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/server';
 import { TEAM } from '@/lib/teams';
 import { formatMYR } from '@/lib/utils';
+import { getTakenPlayerNumbers } from '@/lib/players';
 import type { Product } from '@/lib/types';
 import { ProductPurchase } from '@/components/product/purchase';
 
-export const revalidate = 60;
+// Player-number availability must reflect the latest order state.
+export const dynamic = 'force-dynamic';
 
 async function getProduct(slug: string): Promise<Product | null> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return null;
@@ -27,7 +29,10 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await getProduct(slug);
+  const [product, takenPlayers] = await Promise.all([
+    getProduct(slug),
+    getTakenPlayerNumbers(),
+  ]);
   if (!product) notFound();
 
   const sleeveLabel = product.sleeve_type === 'short' ? 'Short sleeve' : 'Long sleeve';
@@ -71,7 +76,7 @@ export default async function ProductPage({
           )}
 
           <div className="mt-10 divider pt-8">
-            <ProductPurchase product={product} />
+            <ProductPurchase product={product} takenPlayers={takenPlayers} />
           </div>
 
           <div className="mt-12 border-t border-line pt-6 text-[13px] text-muted body-lede">
