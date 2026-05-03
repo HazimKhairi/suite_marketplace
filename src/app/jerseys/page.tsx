@@ -30,19 +30,20 @@ export default async function JerseysPage() {
     <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 lg:pt-16 pb-24">
       <div className="grid grid-cols-12 gap-6 mb-12 items-end">
         <div className="col-span-12 md:col-span-7">
-          <p className="eyebrow">Catalog · {String(products.length).padStart(2, '0')} jerseys</p>
-          <h1 className="h-display text-[56px] md:text-[96px] mt-4">{TEAM.short}.</h1>
-          <p className="mt-4 text-muted max-w-md text-[14px]">
-            {TEAM.fullName}. Custom nama dan nombor untuk setiap baju.
+          <p className="eyebrow">Catalog / {String(products.length).padStart(2, '0')} jerseys</p>
+          <h1 className="h-display text-[64px] md:text-[112px] mt-4">{TEAM.short}.</h1>
+          <p className="mt-4 body-lede text-muted max-w-md text-[15px]">
+            {TEAM.fullName}. Custom name and number on every order.
           </p>
         </div>
       </div>
 
       {products.length === 0 ? (
         <div className="border border-dashed border-line p-16 text-center">
-          <p className="font-display text-3xl mb-2">No jerseys here yet.</p>
+          <p className="font-display font-extrabold text-3xl mb-2">No jerseys yet.</p>
           <p className="text-muted">
-            Setup Supabase via <code className="font-mono">supabase/README.md</code> dan run seed.
+            Set up Supabase via <code className="font-mono">supabase/README.md</code> and run the
+            seed.
           </p>
         </div>
       ) : (
@@ -62,7 +63,7 @@ export default async function JerseysPage() {
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 {p.stock < 10 && p.stock > 0 && (
-                  <span className="absolute top-3 left-3 bg-accent text-white px-2 py-1 text-[10px] font-mono uppercase tracking-[0.16em]">
+                  <span className="absolute top-3 left-3 bg-flame-red text-white px-2 py-1 text-[10px] font-mono uppercase tracking-[0.16em]">
                     Low stock
                   </span>
                 )}
@@ -76,14 +77,18 @@ export default async function JerseysPage() {
                 <div>
                   <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
                     {String(i + 1).padStart(2, '0')} /{' '}
-                    {p.sleeve_type === 'short' ? 'Lengan pendek' : 'Lengan panjang'}
+                    {p.sleeve_type === 'short' ? 'Short sleeve' : 'Long sleeve'}
                   </p>
-                  <p className="text-[16px] mt-2 font-display">{p.name}</p>
+                  <p className="text-[16px] mt-2 font-heading font-bold">{p.name}</p>
                 </div>
                 <p className="font-mono text-[15px]">{formatMYR(p.price)}</p>
               </div>
-              <p className="mt-3 text-[13px] text-muted inline-flex items-center gap-1">
-                Tempah <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
+              <p className="mt-3 text-[13px] text-muted inline-flex items-center gap-1 group-hover:text-flame-red transition-colors">
+                Order
+                <ArrowRight
+                  className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                  strokeWidth={1.5}
+                />
               </p>
             </Link>
           ))}

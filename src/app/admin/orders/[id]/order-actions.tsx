@@ -9,10 +9,10 @@ import { Textarea } from '@/components/ui/input';
 import type { OrderStatus } from '@/lib/types';
 
 const ACTIONS: { label: string; status: OrderStatus; icon: React.ElementType; tone: string }[] = [
-  { label: 'Approve · paid', status: 'paid', icon: Check, tone: 'bg-[#0f5132] text-white hover:opacity-90' },
-  { label: 'Mark shipped', status: 'shipped', icon: Truck, tone: 'bg-ink text-canvas hover:bg-accent' },
-  { label: 'Mark completed', status: 'completed', icon: Check, tone: 'border border-line hover:border-ink' },
-  { label: 'Reject', status: 'rejected', icon: X, tone: 'bg-accent text-white hover:opacity-90' },
+  { label: 'Approve as paid', status: 'paid', icon: Check, tone: 'bg-leaf text-white hover:opacity-90' },
+  { label: 'Mark as shipped', status: 'shipped', icon: Truck, tone: 'bg-ink text-canvas hover:bg-flame-red' },
+  { label: 'Mark as completed', status: 'completed', icon: Check, tone: 'border border-line hover:border-ink' },
+  { label: 'Reject', status: 'rejected', icon: X, tone: 'bg-flame-red text-white hover:opacity-90' },
 ];
 
 export function OrderActions({

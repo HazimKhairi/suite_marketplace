@@ -30,15 +30,15 @@ export default async function ProductPage({
   const product = await getProduct(slug);
   if (!product) notFound();
 
-  const sleeveLabel = product.sleeve_type === 'short' ? 'Lengan pendek' : 'Lengan panjang';
+  const sleeveLabel = product.sleeve_type === 'short' ? 'Short sleeve' : 'Long sleeve';
 
   return (
     <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-8 pb-24">
       <Link
         href="/jerseys"
-        className="inline-flex items-center gap-2 text-[13px] text-muted hover:text-ink mb-8"
+        className="inline-flex items-center gap-2 text-[13px] text-muted hover:text-flame-red mb-8"
       >
-        <ArrowLeft className="w-4 h-4" strokeWidth={1.5} /> Kembali ke catalog
+        <ArrowLeft className="w-4 h-4" strokeWidth={1.5} /> Back to catalog
       </Link>
 
       <div className="grid grid-cols-12 gap-6 lg:gap-12">
@@ -57,26 +57,26 @@ export default async function ProductPage({
 
         <div className="col-span-12 lg:col-span-5">
           <p className="eyebrow">{TEAM.fullName}</p>
-          <h1 className="h-display text-[48px] md:text-[72px] mt-4">{product.name}</h1>
-          <div className="mt-3 flex items-center gap-3 text-[13px] text-muted">
+          <h1 className="h-display text-[48px] md:text-[88px] mt-4">{product.name}</h1>
+          <div className="mt-4 flex items-center gap-3 text-[13px] text-muted">
             <span className="font-mono uppercase tracking-[0.14em]">
               {product.category === 'jacket' ? 'Jacket' : sleeveLabel}
             </span>
-            <span>·</span>
+            <span>/</span>
             <span className="font-mono">{formatMYR(product.price)}</span>
           </div>
 
           {product.description && (
-            <p className="mt-8 text-[15px] leading-relaxed text-ink-soft">{product.description}</p>
+            <p className="mt-8 body-lede text-[15px] text-ink-soft">{product.description}</p>
           )}
 
           <div className="mt-10 divider pt-8">
             <ProductPurchase product={product} />
           </div>
 
-          <div className="mt-12 border-t border-line pt-6 text-[13px] text-muted leading-relaxed">
+          <div className="mt-12 border-t border-line pt-6 text-[13px] text-muted body-lede">
             Made in Malaysia. Sublimation print on breathable mesh. Care: cold wash, hang dry,
-            iron inside-out on low.
+            iron inside out on low.
           </div>
         </div>
       </div>

@@ -20,7 +20,7 @@ create table if not exists public.products (
   stock integer not null default 0,
   image_url text not null,
   description text,
-  sizes text[] default array['S','M','L','XL','XXL'],
+  sizes text[] default array['S','M','L','XL','XXL','3XL','4XL','5XL','6XL','7XL','8XL'],
   active boolean default true,
   created_at timestamptz default now()
 );

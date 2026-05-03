@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { extractReceipt, matchReceipt } from '@/lib/gemini';
+import { sendOrderEmail } from '@/lib/email';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -29,7 +30,7 @@ export async function POST(
   const supabase = createAdminClient();
   const { data: order, error: oErr } = await supabase
     .from('orders')
-    .select('id, total_amount, status')
+    .select('id, total_amount, status, order_number, customer_name, customer_email, delivery_method, delivery_address, order_items(*)')
     .eq('id', id)
     .maybeSingle();
 
@@ -80,6 +81,25 @@ export async function POST(
     .eq('id', id);
 
   if (updErr) return NextResponse.json({ error: updErr.message }, { status: 500 });
+
+  if (order.customer_email) {
+    try {
+      await sendOrderEmail(
+        {
+          order_number: order.order_number,
+          customer_name: order.customer_name,
+          customer_email: order.customer_email,
+          delivery_method: order.delivery_method,
+          delivery_address: order.delivery_address,
+          total_amount: order.total_amount,
+          order_items: order.order_items,
+        },
+        newStatus,
+      );
+    } catch (e) {
+      console.error('Email send failed:', e);
+    }
+  }
 
   return NextResponse.json({ ocr, match, status: newStatus });
 }

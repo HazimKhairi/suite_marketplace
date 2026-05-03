@@ -59,7 +59,7 @@ export default async function AdminOrderPage({
             <Section title="Customer">
               <Field k="Name" v={o.customer_name} />
               <Field k="Phone" v={<span className="font-mono">{o.customer_phone}</span>} />
-              <Field k="Email" v={o.customer_email ?? '—'} />
+              <Field k="Email" v={o.customer_email ?? 'Not provided'} />
               <Field
                 k="Delivery"
                 v={
@@ -139,12 +139,12 @@ export default async function AdminOrderPage({
                 />
                 <Field
                   k="Detected amount"
-                  v={ocr.detected_amount != null ? formatMYR(ocr.detected_amount) : '—'}
+                  v={ocr.detected_amount != null ? formatMYR(ocr.detected_amount) : 'Not provided'}
                 />
-                <Field k="Recipient" v={ocr.detected_recipient ?? '—'} />
-                <Field k="Reference" v={ocr.detected_reference ?? '—'} />
-                <Field k="Bank" v={ocr.detected_bank ?? '—'} />
-                <Field k="Date" v={ocr.detected_date ?? '—'} />
+                <Field k="Recipient" v={ocr.detected_recipient ?? 'Not provided'} />
+                <Field k="Reference" v={ocr.detected_reference ?? 'Not provided'} />
+                <Field k="Bank" v={ocr.detected_bank ?? 'Not provided'} />
+                <Field k="Date" v={ocr.detected_date ?? 'Not provided'} />
                 <Field
                   k="Confidence"
                   v={<span className="capitalize">{ocr.confidence}</span>}

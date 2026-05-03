@@ -1,8 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
+import { sendOrderEmail } from '@/lib/email';
 import type { OrderStatus } from '@/lib/types';
 
 export const runtime = 'nodejs';
+export const maxDuration = 30;
 
 const ALLOWED_STATUS: OrderStatus[] = [
   'pending_payment',
@@ -49,7 +51,32 @@ export async function PATCH(
   }
 
   const admin = createAdminClient();
-  const { data, error } = await admin.from('orders').update(update).eq('id', id).select().single();
+  const { data, error } = await admin
+    .from('orders')
+    .update(update)
+    .eq('id', id)
+    .select('*, order_items(*)')
+    .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  if (body.status && data.customer_email) {
+    try {
+      await sendOrderEmail(
+        {
+          order_number: data.order_number,
+          customer_name: data.customer_name,
+          customer_email: data.customer_email,
+          delivery_method: data.delivery_method,
+          delivery_address: data.delivery_address,
+          total_amount: data.total_amount,
+          order_items: data.order_items,
+        },
+        body.status as OrderStatus,
+      );
+    } catch (e) {
+      console.error('Email send failed:', e);
+    }
+  }
+
   return NextResponse.json(data);
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { effectiveUnitPrice } from '@/lib/pricing';
 import type { CartItem } from '@/lib/types';
 
 type CartContextValue = {
@@ -74,7 +75,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clear = () => setItems([]);
 
   const count = items.reduce((s, i) => s + i.quantity, 0);
-  const subtotal = items.reduce((s, i) => s + i.unit_price * i.quantity, 0);
+  const subtotal = items.reduce(
+    (s, i) => s + effectiveUnitPrice(i.unit_price, i.size) * i.quantity,
+    0,
+  );
 
   return (
     <CartContext.Provider value={{ items, add, remove, setQty, clear, count, subtotal, ready }}>

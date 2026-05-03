@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { Logo } from '@/components/site/logo';
 import { LogoutButton } from './logout-button';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -12,17 +13,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="border-t border-line">
+      <div className="h-1 flame-gradient" />
       <div className="border-b border-line bg-paper">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-10 h-14 flex items-center justify-between">
           <div className="flex items-center gap-7">
+            <Logo size="sm" />
             <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
               Admin Console
             </span>
-            <nav className="flex items-center gap-5 text-[13px]">
-              <Link href="/admin" className="hover:text-accent">
+            <nav className="flex items-center gap-5 text-[13px] font-heading">
+              <Link href="/admin" className="hover:text-flame-red">
                 Orders
               </Link>
-              <Link href="/admin/products" className="hover:text-accent">
+              <Link href="/admin/products" className="hover:text-flame-red">
                 Products
               </Link>
             </nav>

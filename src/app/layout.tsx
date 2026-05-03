@@ -1,38 +1,53 @@
 import type { Metadata } from 'next';
-import { Inter, Instrument_Serif, JetBrains_Mono } from 'next/font/google';
+import { Inter, Montserrat, Open_Sans, Lato, Roboto } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/site/header';
 import { Footer } from '@/components/site/footer';
 import { Toaster } from 'sonner';
 import { CartProvider } from '@/lib/cart';
 
-const sans = Inter({
-  variable: '--font-sans',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
   display: 'swap',
 });
 
-const display = Instrument_Serif({
-  variable: '--font-display',
-  weight: '400',
+const montserrat = Montserrat({
+  variable: '--font-montserrat',
+  weight: ['400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
   display: 'swap',
 });
 
-const mono = JetBrains_Mono({
-  variable: '--font-mono',
+const openSans = Open_Sans({
+  variable: '--font-open-sans',
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+const lato = Lato({
+  variable: '--font-lato',
+  weight: ['300', '400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+const roboto = Roboto({
+  variable: '--font-roboto',
+  weight: ['400', '500', '700'],
   subsets: ['latin'],
   display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'Suite Marketplace — Sukan UiTM Terengganu 2026',
+  title: 'Suite Games 2026 / Volleyball UiTM Kuala Terengganu',
   description:
-    'Official jersey marketplace for the 5th Suite Games — UiTM Dungun, UiTM Kuala Terengganu, UiTM Bukit Besi.',
+    'Official volleyball jerseys for UiTM Kuala Terengganu. Custom name and number on every order. Short sleeve RM 28. Long sleeve RM 33.',
   metadataBase: new URL('https://suite-marketplace.vercel.app'),
   openGraph: {
-    title: 'Suite Marketplace — Sukan UiTM Terengganu 2026',
-    description: 'Official jerseys for the 5th Suite Games.',
+    title: 'Suite Games 2026 / Volleyball UiTM Kuala Terengganu',
+    description: 'Official volleyball jerseys with custom name and number.',
     type: 'website',
   },
 };
@@ -41,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${sans.variable} ${display.variable} ${mono.variable} h-full antialiased`}
+      className={`${inter.variable} ${montserrat.variable} ${openSans.variable} ${lato.variable} ${roboto.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-canvas text-ink">
         <CartProvider>
@@ -56,7 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 border: '1px solid var(--line)',
                 background: 'var(--paper)',
                 color: 'var(--ink)',
-                fontFamily: 'var(--font-sans)',
+                fontFamily: 'var(--font-inter)',
               },
             }}
           />

@@ -1,29 +1,30 @@
--- Volleyball UiTM Kuala Terengganu — current drop
--- Jersey only (jacket excluded for now). Custom name + number per order line.
+-- Volleyball UiTM Kuala Terengganu official drop
+-- Jersey only for the current drop. Custom name and number per line.
+-- Sizes 3XL through 6XL carry a +RM5 surcharge; 7XL and 8XL carry +RM10.
 
 insert into public.products (slug, name, category, sleeve_type, color, price, stock, image_url, description, sizes) values
   (
     'jersey-vb-uitmkt-short',
-    'VB UiTM KT — Jersey Lengan Pendek',
+    'VB UiTM KT Short Sleeve Jersey',
     'jersey',
     'short',
     'white',
     28.00,
     100,
     '/jerseys/jersey_white.png',
-    'Official volleyball jersey for UiTM Kuala Terengganu. Lengan pendek, sublimation print, breathable mesh. Custom nama + nombor untuk setiap baju.',
-    array['S','M','L','XL','XXL']
+    'Official volleyball jersey for UiTM Kuala Terengganu. Short sleeve, sublimation print, breathable mesh. Custom name and number for every order.',
+    array['S','M','L','XL','XXL','3XL','4XL','5XL','6XL','7XL','8XL']
   ),
   (
     'jersey-vb-uitmkt-long',
-    'VB UiTM KT — Jersey Lengan Panjang',
+    'VB UiTM KT Long Sleeve Jersey',
     'jersey',
     'long',
     'black',
     33.00,
     100,
     '/jerseys/jersey_black.png',
-    'Official volleyball jersey for UiTM Kuala Terengganu. Lengan panjang, perfect for warm-ups & match day. Custom nama + nombor untuk setiap baju.',
-    array['S','M','L','XL','XXL']
+    'Official volleyball jersey for UiTM Kuala Terengganu. Long sleeve, perfect for warm-ups and match day. Custom name and number for every order.',
+    array['S','M','L','XL','XXL','3XL','4XL','5XL','6XL','7XL','8XL']
   )
 on conflict (slug) do nothing;

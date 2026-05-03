@@ -52,9 +52,9 @@ export function LoginClient() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full bg-ink text-canvas h-12 px-6 inline-flex items-center justify-center hover:bg-accent transition-colors disabled:opacity-50"
+        className="w-full bg-ink text-canvas h-12 px-6 inline-flex items-center justify-center hover:bg-flame-red transition-colors disabled:opacity-50 font-heading font-semibold"
       >
-        {submitting ? 'Signing in…' : 'Sign in'}
+        {submitting ? 'Signing in' : 'Sign in'}
       </button>
     </form>
   );
