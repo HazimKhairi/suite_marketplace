@@ -360,7 +360,7 @@ export function CheckoutClient() {
               <div className="border border-line p-6 lg:p-10 bg-paper flex flex-col items-center text-center">
                 <p className="eyebrow">Or scan DuitNow QR</p>
                 <div className="relative mt-8 w-full max-w-[480px]">
-                  <div className="relative aspect-square bg-canvas border border-line p-3 sm:p-5">
+                  <div className="relative aspect-square w-full bg-canvas border border-line p-3 sm:p-5">
                     <Image
                       src="/branding/qr_code.png"
                       alt="DuitNow QR"
