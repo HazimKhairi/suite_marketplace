@@ -111,6 +111,7 @@ body {
 .rise-3 { animation-delay: 160ms; }
 .rise-4 { animation-delay: 240ms; }
 .rise-5 { animation-delay: 320ms; }
+.rise-6 { animation-delay: 400ms; }
 
 /* Torch gradient strip used as a brand motif */
 .flame-gradient {
