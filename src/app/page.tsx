@@ -193,7 +193,7 @@ export default async function Home() {
             { n: '01', k: 'Pick a cut', v: 'Short sleeve at RM 28 or long sleeve at RM 33.', tint: 'text-flame-red' },
             { n: '02', k: 'Personalize', v: 'Name on the back, number 1 to 999, your size.', tint: 'text-flame-purple' },
             { n: '03', k: 'Pay', v: 'DuitNow QR or bank transfer. Receipt verified by AI.', tint: 'text-gold' },
-            { n: '04', k: 'Play', v: 'Track your order online. Pickup at UiTM KT or courier.', tint: 'text-leaf' },
+            { n: '04', k: 'Play', v: 'Track your order online. Self pickup at UiTM KT.', tint: 'text-leaf' },
           ].map((s) => (
             <div
               key={s.n}

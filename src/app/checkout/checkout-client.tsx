@@ -9,8 +9,7 @@ import { toast } from 'sonner';
 import { useCart } from '@/lib/cart';
 import { formatMYR } from '@/lib/utils';
 import { effectiveUnitPrice, surchargeLabel } from '@/lib/pricing';
-import { Input, Label, Textarea } from '@/components/ui/input';
-import { SHIPPING_FEE } from '@/lib/checkout';
+import { Input, Label } from '@/components/ui/input';
 
 type Step = 'review' | 'details' | 'payment';
 
@@ -18,8 +17,6 @@ type CustomerForm = {
   customer_name: string;
   customer_phone: string;
   customer_email: string;
-  delivery_method: 'pickup' | 'delivery';
-  delivery_address: string;
 };
 
 const BANK = {
@@ -37,8 +34,6 @@ export function CheckoutClient() {
     customer_name: '',
     customer_phone: '',
     customer_email: '',
-    delivery_method: 'pickup',
-    delivery_address: '',
   });
 
   const [creating, setCreating] = useState(false);
@@ -51,14 +46,12 @@ export function CheckoutClient() {
     | null
   >(null);
 
-  const shipping = form.delivery_method === 'delivery' ? SHIPPING_FEE : 0;
-  const total = subtotal + shipping;
+  const total = subtotal;
 
   const canProceedDetails = useMemo(() => {
     if (form.customer_name.trim().length < 2) return false;
     if (form.customer_phone.replace(/\s|-/g, '').length < 8) return false;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.customer_email.trim())) return false;
-    if (form.delivery_method === 'delivery' && form.delivery_address.trim().length < 10) return false;
     return true;
   }, [form]);
 
@@ -96,8 +89,6 @@ export function CheckoutClient() {
           customer_name: form.customer_name,
           customer_phone: form.customer_phone,
           customer_email: form.customer_email,
-          delivery_method: form.delivery_method,
-          delivery_address: form.delivery_address,
           items: items.map((i) => ({
             productId: i.productId,
             size: i.size,
@@ -160,7 +151,7 @@ export function CheckoutClient() {
           </p>
           <h1 className="h-display text-[48px] md:text-[96px] mt-3">
             {step === 'review' && 'Your bag.'}
-            {step === 'details' && 'Where to.'}
+            {step === 'details' && 'Your details.'}
             {step === 'payment' && 'Pay and confirm.'}
           </h1>
         </div>
@@ -298,47 +289,24 @@ export function CheckoutClient() {
                   onChange={(e) => setForm({ ...form, customer_email: e.target.value })}
                 />
                 <p className="mt-2 text-[12px] text-muted body-lede">
-                  We will email your confirmation, payment status, and shipping updates here.
+                  We will email your confirmation, payment status, and order updates here.
                 </p>
               </div>
 
               <div>
-                <Label>Delivery method</Label>
-                <div className="grid grid-cols-2 gap-px bg-line border border-line">
-                  {(['pickup', 'delivery'] as const).map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => setForm({ ...form, delivery_method: m })}
-                      className={`p-5 text-left transition-colors ${
-                        form.delivery_method === m
-                          ? 'bg-ink text-canvas'
-                          : 'bg-canvas hover:bg-paper'
-                      }`}
-                    >
-                      <p className="font-mono text-[10px] uppercase tracking-[0.18em]">
-                        {m === 'pickup' ? '01 / Free' : `02 / +${formatMYR(SHIPPING_FEE)}`}
-                      </p>
-                      <p className="text-[15px] mt-2 font-heading font-semibold">
-                        {m === 'pickup'
-                          ? 'Self pickup at UiTM KT'
-                          : 'Courier (Peninsular Malaysia)'}
-                      </p>
-                    </button>
-                  ))}
+                <Label>Pickup</Label>
+                <div className="border border-line p-5 bg-paper">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+                    01 / Free
+                  </p>
+                  <p className="text-[15px] mt-2 font-heading font-semibold">
+                    Self pickup at UiTM KT
+                  </p>
+                  <p className="mt-2 body-lede text-[13px] text-muted">
+                    Collect on campus once your order is ready. We will email the pickup window.
+                  </p>
                 </div>
               </div>
-
-              {form.delivery_method === 'delivery' && (
-                <div>
-                  <Label>Delivery address</Label>
-                  <Textarea
-                    placeholder="No. 12, Jalan, Bandar, Poskod, Negeri"
-                    value={form.delivery_address}
-                    onChange={(e) => setForm({ ...form, delivery_address: e.target.value })}
-                  />
-                </div>
-              )}
             </div>
           )}
 
@@ -461,10 +429,7 @@ export function CheckoutClient() {
             <p className="eyebrow">Summary</p>
             <div className="mt-6 space-y-3 text-[14px]">
               <Row k="Subtotal" v={formatMYR(subtotal)} />
-              <Row
-                k={`Shipping (${form.delivery_method})`}
-                v={shipping ? formatMYR(shipping) : 'FREE'}
-              />
+              <Row k="Pickup at UiTM KT" v="FREE" />
               <div className="border-t border-line pt-3 mt-3">
                 <Row
                   k={<span className="text-[15px] font-heading">Total</span>}

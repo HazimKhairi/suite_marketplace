@@ -60,14 +60,7 @@ export default async function AdminOrderPage({
               <Field k="Name" v={o.customer_name} />
               <Field k="Phone" v={<span className="font-mono">{o.customer_phone}</span>} />
               <Field k="Email" v={o.customer_email ?? 'Not provided'} />
-              <Field
-                k="Delivery"
-                v={
-                  o.delivery_method === 'pickup'
-                    ? 'Self pickup · Dungun'
-                    : `Courier · ${o.delivery_address}`
-                }
-              />
+              <Field k="Pickup" v="Self pickup · UiTM KT" />
             </Section>
 
             <Section title="Items">
@@ -105,10 +98,6 @@ export default async function AdminOrderPage({
 
             <Section title="Totals">
               <Field k="Subtotal" v={formatMYR(Number(o.subtotal))} />
-              <Field
-                k="Shipping"
-                v={Number(o.shipping_fee) === 0 ? 'FREE' : formatMYR(Number(o.shipping_fee))}
-              />
               <Field
                 k="Total"
                 v={<span className="font-mono text-[15px]">{formatMYR(Number(o.total_amount))}</span>}

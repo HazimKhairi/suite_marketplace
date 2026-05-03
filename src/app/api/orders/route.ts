@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
-import { SHIPPING_FEE, checkoutSchema } from '@/lib/checkout';
+import { checkoutSchema } from '@/lib/checkout';
 import { effectiveUnitPrice, sizeSurcharge } from '@/lib/pricing';
 import { sendOrderEmail } from '@/lib/email';
 
@@ -23,10 +23,6 @@ export async function POST(req: Request) {
     );
   }
   const data = parsed.data;
-
-  if (data.delivery_method === 'delivery' && !data.delivery_address?.trim()) {
-    return NextResponse.json({ error: 'Delivery address required' }, { status: 400 });
-  }
 
   const supabase = createAdminClient();
   const ids = Array.from(new Set(data.items.map((i) => i.productId)));
@@ -119,8 +115,7 @@ export async function POST(req: Request) {
     });
   }
 
-  const shipping = data.delivery_method === 'delivery' ? SHIPPING_FEE : 0;
-  const total = subtotal + shipping;
+  const total = subtotal;
 
   const { data: order, error: oErr } = await supabase
     .from('orders')
@@ -129,10 +124,10 @@ export async function POST(req: Request) {
       customer_name: data.customer_name,
       customer_phone: data.customer_phone,
       customer_email: data.customer_email,
-      delivery_method: data.delivery_method,
-      delivery_address: data.delivery_address || null,
+      delivery_method: 'pickup',
+      delivery_address: null,
       subtotal,
-      shipping_fee: shipping,
+      shipping_fee: 0,
       total_amount: total,
       status: 'pending_payment',
     })
