@@ -5,7 +5,7 @@ import { createAdminClient } from '@/lib/supabase/server';
 import { TEAM, ORG_CONTACT } from '@/lib/teams';
 import { formatMYR } from '@/lib/utils';
 import type { Product } from '@/lib/types';
-import { PixelAvatar } from '@/components/site/pixel-avatar';
+import { PixelMascot } from '@/components/site/pixel-mascot';
 
 export const revalidate = 60;
 
@@ -61,6 +61,12 @@ export default async function Home() {
 
   return (
     <div>
+      <div className="border-b border-line bg-paper">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-center">
+          <PixelMascot />
+        </div>
+      </div>
+
       <section className="relative">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 lg:pt-20 pb-24 lg:pb-32">
           <div className="grid grid-cols-12 gap-6 lg:gap-12 items-end">
@@ -388,66 +394,10 @@ export default async function Home() {
 
       <section className="border-t border-line bg-ink text-canvas">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-24 lg:py-32 grid grid-cols-12 gap-6 lg:gap-10">
-          <div className="col-span-12 md:col-span-3 flex flex-col items-start gap-6">
+          <div className="col-span-12 md:col-span-3">
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-flame-red">
               04 / Built by hazimdev
             </p>
-
-            <a
-              href="https://hazimdev.com?utm_source=suite-marketplace&utm_medium=avatar"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Visit hazimdev.com"
-              className="group/avatar relative block"
-            >
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute -inset-3 rounded-full bg-flame-red opacity-30 blur-2xl group-hover/avatar:opacity-70 transition-opacity duration-500"
-              />
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute -inset-2 border-2 border-dashed border-flame-red/40 group-hover/avatar:border-flame-red transition-colors animate-spin-slow"
-              />
-              <span className="relative block w-44 h-44 sm:w-52 sm:h-52 bg-canvas border-2 border-canvas/20 group-hover/avatar:border-flame-red transition-all duration-500 group-hover/avatar:rotate-[-2deg] overflow-hidden flex items-center justify-center p-3 [image-rendering:pixelated]">
-                <PixelAvatar className="w-full h-full transition-transform duration-700 group-hover/avatar:scale-110" />
-              </span>
-
-              <span
-                aria-hidden="true"
-                className="absolute -top-3 -right-3 inline-flex items-center justify-center w-10 h-10 bg-flame-red text-canvas font-mono text-[10px] uppercase tracking-[0.14em] shadow-lg group-hover/avatar:scale-110 transition-transform"
-              >
-                <span className="relative inline-flex w-2 h-2">
-                  <span className="absolute inline-flex w-full h-full bg-canvas opacity-75 animate-ping" />
-                  <span className="relative inline-flex w-2 h-2 bg-canvas" />
-                </span>
-              </span>
-
-              <span
-                aria-hidden="true"
-                className="absolute left-1/2 -translate-x-1/2 -bottom-3 inline-block bg-canvas text-ink font-mono text-[9px] uppercase tracking-[0.18em] px-2.5 py-1 shadow-lg group-hover/avatar:bg-flame-red group-hover/avatar:text-canvas transition-colors whitespace-nowrap"
-              >
-                ✦ Touch me
-              </span>
-
-              <span
-                aria-hidden="true"
-                className="absolute left-full top-3 ml-5 hidden lg:flex items-center gap-2 opacity-0 -translate-x-2 group-hover/avatar:opacity-100 group-hover/avatar:translate-x-0 transition-all duration-300 pointer-events-none"
-              >
-                <span className="w-0 h-0 border-y-8 border-y-transparent border-r-[12px] border-r-canvas" />
-                <span className="bg-canvas text-ink px-3 py-2 font-mono text-[11px] uppercase tracking-[0.16em] shadow-xl">
-                  Hi, saya Hazim 👋
-                </span>
-              </span>
-            </a>
-
-            <div className="lg:hidden">
-              <p className="font-display font-extrabold text-xl leading-tight">
-                Hi, saya <span className="text-flame-red">Hazim</span> 👋
-              </p>
-              <p className="mt-1 text-[12px] font-mono uppercase tracking-[0.16em] text-canvas/60">
-                Tap avatar untuk visit portfolio
-              </p>
-            </div>
           </div>
           <div className="col-span-12 md:col-span-9">
             <p className="font-display font-extrabold text-[32px] md:text-[56px] leading-tight">
