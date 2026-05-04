@@ -126,12 +126,12 @@ export default async function Home() {
           <div className="col-span-12 md:col-span-7">
             <p className="eyebrow">01 / The drop</p>
             <h2 className="h-section text-[40px] md:text-[80px] mt-4">
-              Four cuts. <span className="text-flame-red">One</span> squad.
+              Full kit. <span className="text-flame-red">One</span> squad.
             </h2>
           </div>
           <div className="col-span-12 md:col-span-5 body-lede text-muted text-[15px]">
-            Black or white. Short or long. Pick the cut, drop your name and number on the back, hit
-            the court at Suite Games 11.12.13 June.
+            Jerseys in black or white, short or long, with your name and number on the back. Plus a
+            track jacket suitable for all athletes. Hit the court at Suite Games 11.12.13 June.
           </div>
         </div>
 
@@ -141,7 +141,7 @@ export default async function Home() {
             drop.
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-line border border-line">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-px bg-line border border-line">
             {products.map((p) => (
               <Link
                 key={p.id}
@@ -154,7 +154,7 @@ export default async function Home() {
                     alt={p.name}
                     fill
                     className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
-                    sizes="(max-width: 640px) 50vw, 25vw"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                   />
                   {p.stock < 10 && p.stock > 0 && (
                     <span className="absolute top-2 left-2 bg-flame-red text-white px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.14em]">
@@ -169,7 +169,7 @@ export default async function Home() {
                 </div>
                 <div className="mt-3 flex items-baseline justify-between gap-2">
                   <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted truncate">
-                    {p.color} / {p.sleeve_type === 'short' ? 'Short' : 'Long'}
+                    {p.color} / {p.category === 'jacket' ? 'Jacket' : p.sleeve_type === 'short' ? 'Short' : 'Long'}
                   </p>
                   <p className="font-mono text-[12px] whitespace-nowrap group-hover:text-flame-red transition-colors">
                     {formatMYR(p.price)}
