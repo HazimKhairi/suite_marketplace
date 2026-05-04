@@ -222,9 +222,8 @@ export function SizeChartButton() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="hover:text-flame-red transition-colors inline-flex items-center gap-1.5"
+        className="hover:text-flame-red transition-colors"
       >
-        <Ruler className="w-3.5 h-3.5" strokeWidth={1.5} />
         Size
       </button>
       {mounted && modal ? createPortal(modal, document.body) : null}
