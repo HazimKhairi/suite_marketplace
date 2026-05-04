@@ -192,7 +192,7 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
             <div>
               <Label>Athlete passcode</Label>
               <Input
-                type="password"
+                type="text"
                 value={passcode}
                 onChange={(e) => setPasscode(e.target.value)}
                 placeholder="Ask your team manager or admin"
