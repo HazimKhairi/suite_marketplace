@@ -101,6 +101,10 @@ body {
 }
 .animate-scroll-x { animation: scroll-x 50s linear infinite; }
 
+/* Slow rotating ring for the hazimdev avatar accent */
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 18s linear infinite; }
+
 /* Reveal on load */
 @keyframes rise {
   from { opacity: 0; transform: translateY(14px); }
