@@ -78,9 +78,22 @@ export default async function Home() {
                 />
                 <div className="absolute top-5 left-5 right-5 flex items-start justify-between">
                   <span className="eyebrow bg-canvas/90 px-2 py-1">Drop / 01</span>
-                  <span className="bg-flame-red text-white px-2 py-1 text-[11px] font-mono uppercase tracking-[0.14em]">
-                    Track jacket
+                  <span className="bg-flame-red text-white px-2 py-1 text-[11px] font-mono uppercase tracking-[0.14em] animate-pulse">
+                    Hot drop
                   </span>
+                </div>
+                <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
+                  <span className="bg-ink text-canvas px-3 py-2 text-[10px] font-mono uppercase tracking-[0.16em]">
+                    Limited launch
+                  </span>
+                  <div className="bg-canvas/95 backdrop-blur px-3 py-2 text-right">
+                    <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted line-through">
+                      RM 150
+                    </p>
+                    <p className="font-display font-extrabold text-2xl text-flame-red leading-none mt-0.5">
+                      RM 80
+                    </p>
+                  </div>
                 </div>
               </div>
               <div className="mt-5 border-t border-line pt-4">
@@ -89,6 +102,9 @@ export default async function Home() {
                 </p>
                 <p className="font-display font-extrabold text-2xl mt-2 leading-tight">
                   Suitable for all athletes.
+                </p>
+                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-flame-purple">
+                  Launch promo — save RM 70 while stock lasts.
                 </p>
                 <div className="mt-4 flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.16em] text-muted">
                   <span>VB / UITM KT</span>
