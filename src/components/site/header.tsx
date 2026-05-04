@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Logo } from './logo';
 import { CartPill } from './cart-pill';
+import { SizeChartButton } from '@/components/product/size-chart';
 
 export function Header() {
   return (
@@ -19,10 +20,11 @@ export function Header() {
           <Logo size="sm" />
           <span className="eyebrow hidden sm:inline-block">Suit up.</span>
         </div>
-        <nav className="flex items-center gap-7 text-[13px] font-heading">
+        <nav className="flex items-center gap-5 sm:gap-7 text-[13px] font-heading">
           <Link href="/jerseys" className="hover:text-flame-red transition-colors">
             Jerseys
           </Link>
+          <SizeChartButton />
           <Link
             href="/track"
             className="hover:text-flame-red transition-colors hidden sm:inline"
