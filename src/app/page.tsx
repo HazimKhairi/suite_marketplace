@@ -400,15 +400,15 @@ export default async function Home() {
               <span className="text-flame-red">Want one for your team, club, or event?</span>
             </p>
             <p className="mt-6 body-lede max-w-2xl text-[15px] text-canvas/70">
-              Custom kit storefront, QR payment with AI receipt verification, order tracking, admin
-              dashboard. Next.js, Supabase, deployed on Vercel. Same stack, same speed, your
-              branding. From RM 800 — turnaround in days, not months.
+              Sharp storefront, smart payments, instant order tracking. Your brand, your flow, live
+              in days. Stop wrestling with Google Forms and DM screenshots — let people order like
+              it&rsquo;s 2026.
             </p>
 
             <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-px bg-canvas/15 border border-canvas/15">
-              <Pillar n="01" k="Storefront" v="Custom catalog, cart, checkout — all yours." />
-              <Pillar n="02" k="Automation" v="QR pay, AI receipt OCR, email + status flow." />
-              <Pillar n="03" k="Admin" v="Orders, products, exports, all in one place." />
+              <Pillar n="01" k="Looks the part" v="Designed around your brand. Awwwards-grade out the box." />
+              <Pillar n="02" k="Runs itself" v="Payments confirm. Receipts verify. Customers track without asking." />
+              <Pillar n="03" k="One panel" v="Every order, every product, every export — one place." />
             </div>
 
             <div className="mt-10 grid grid-cols-1 lg:grid-cols-5 gap-px bg-canvas/15 border border-canvas/15">
@@ -480,10 +480,6 @@ export default async function Home() {
                 From RM 800
               </p>
             </div>
-
-            <p className="mt-6 text-[11px] font-mono uppercase tracking-[0.16em] text-canvas/40">
-              Next.js · Supabase · Tailwind · Vercel · Sonner · Lucide
-            </p>
           </div>
         </div>
       </section>
