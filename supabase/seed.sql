@@ -51,6 +51,18 @@ insert into public.products (slug, name, category, sleeve_type, color, price, st
     '/jerseys/jersey_black_long_sleeve.png',
     'Official volleyball jersey for UiTM Kuala Terengganu. Long sleeve, perfect for warm-ups and match day. Custom name and number for every order.',
     array['S','M','L','XL','XXL','3XL','4XL','5XL','6XL','7XL','8XL']
+  ),
+  (
+    'jacket-vb-uitmkt-white',
+    'VB UiTM KT Track Jacket',
+    'jacket',
+    null,
+    'white',
+    80.00,
+    50,
+    '/jerseys/jacket_white.png',
+    'Official UiTM Kuala Terengganu track jacket. Full zip, suitable for all athletes — warm-ups, podium, post-match. No custom name and number.',
+    array['S','M','L','XL','XXL','3XL','4XL','5XL','6XL','7XL','8XL']
   )
 on conflict (slug) do update set
   name = excluded.name,

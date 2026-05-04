@@ -69,8 +69,8 @@ export default async function Home() {
             <div className="col-span-12 lg:col-span-5">
               <div className="relative aspect-[4/5] bg-paper border border-line overflow-hidden rise rise-3">
                 <Image
-                  src="/jerseys/jersey_black.png"
-                  alt="VB UiTM KT jersey"
+                  src="/jerseys/jacket_white.png"
+                  alt="VB UiTM KT track jacket"
                   fill
                   priority
                   className="object-cover"
@@ -79,7 +79,7 @@ export default async function Home() {
                 <div className="absolute top-5 left-5 right-5 flex items-start justify-between">
                   <span className="eyebrow bg-canvas/90 px-2 py-1">Drop / 01</span>
                   <span className="bg-flame-red text-white px-2 py-1 text-[11px] font-mono uppercase tracking-[0.14em]">
-                    Custom name
+                    Track jacket
                   </span>
                 </div>
               </div>
