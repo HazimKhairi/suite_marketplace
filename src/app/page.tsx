@@ -32,16 +32,16 @@ export default async function Home() {
         <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 lg:pt-20 pb-24 lg:pb-32">
           <div className="grid grid-cols-12 gap-6 lg:gap-12 items-end">
             <div className="col-span-12 lg:col-span-7">
-              <p className="eyebrow rise">Suite Games 2026 / Volleyball / UiTM Kuala Terengganu</p>
+              <p className="eyebrow rise">Suite Games 2026 / UiTM Kuala Terengganu</p>
               <h1 className="h-display rise rise-2 text-[64px] sm:text-[112px] lg:text-[180px] mt-6">
-                Smash in
+                Suit up in
                 <br />
                 <span className="text-flame-red">your</span> name.
               </h1>
               <p className="rise rise-3 mt-8 max-w-xl body-lede text-[18px] text-ink-soft">
-                The official volleyball kit of UiTM Kuala Terengganu, printed with your own name
-                and number. Short sleeve at RM 28 or long sleeve at RM 33. Pick your size, drop
-                your name on the back, hit the court.
+                The official kit drop for UiTM Kuala Terengganu athletes. Custom jerseys printed
+                with your own name and number, plus a track jacket built for every sport. Pick
+                your kit, drop your name on the back, hit the court.
               </p>
               <div className="rise rise-4 mt-10 flex flex-wrap items-center gap-4">
                 <Link
@@ -107,7 +107,7 @@ export default async function Home() {
                   Launch promo — save RM 70 while stock lasts.
                 </p>
                 <div className="mt-4 flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.16em] text-muted">
-                  <span>VB / UITM KT</span>
+                  <span>SUITE / UITM KT</span>
                   <span>SS / 26</span>
                 </div>
               </div>
@@ -120,7 +120,7 @@ export default async function Home() {
             {Array.from({ length: 4 }).map((_, k) => (
               <div key={k} className="flex shrink-0 items-center gap-12 px-12">
                 {[
-                  { t: 'Volleyball UiTM KT', c: 'text-ink' },
+                  { t: 'Suite UiTM KT', c: 'text-ink' },
                   { t: 'Custom name and number', c: 'text-flame-red' },
                   { t: 'Sublimation print', c: 'text-ink' },
                   { t: 'RM 28 short', c: 'text-flame-purple' },

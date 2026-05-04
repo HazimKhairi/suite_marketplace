@@ -139,7 +139,7 @@ export async function sendOrderEmail(order: OrderForEmail, status: OrderStatus) 
       <head><style>${BASE_STYLES}</style></head>
       <body>
         <div class="wrap">
-          <div class="eyebrow" style="margin-bottom:8px;">Suite Games 2026 / Volleyball UiTM KT</div>
+          <div class="eyebrow" style="margin-bottom:8px;">Suite Games 2026 / UiTM Kuala Terengganu</div>
           <h1>${copy.title}.</h1>
           <p class="muted" style="margin-top:12px; line-height:1.6;">${copy.body}</p>
 

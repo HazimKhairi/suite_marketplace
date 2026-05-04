@@ -30,10 +30,11 @@ export default async function JerseysPage() {
     <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 lg:pt-16 pb-24">
       <div className="grid grid-cols-12 gap-6 mb-12 items-end">
         <div className="col-span-12 md:col-span-7">
-          <p className="eyebrow">Catalog / {String(products.length).padStart(2, '0')} jerseys</p>
+          <p className="eyebrow">Catalog / {String(products.length).padStart(2, '0')} items</p>
           <h1 className="h-display text-[64px] md:text-[112px] mt-4">{TEAM.short}.</h1>
           <p className="mt-4 body-lede text-muted max-w-md text-[15px]">
-            {TEAM.fullName}. Custom name and number on every order.
+            {TEAM.fullName}. Custom jerseys with name and number, plus a track jacket built for
+            every sport.
           </p>
         </div>
       </div>

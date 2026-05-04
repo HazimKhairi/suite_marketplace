@@ -41,13 +41,14 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: 'Suite Games 2026 / Volleyball UiTM Kuala Terengganu',
+  title: 'Suite Games 2026 / UiTM Kuala Terengganu',
   description:
-    'Official volleyball jerseys for UiTM Kuala Terengganu. Custom name and number on every order. Short sleeve RM 28. Long sleeve RM 33.',
+    'Official kit drop for UiTM Kuala Terengganu athletes. Custom jerseys with name and number, plus a track jacket built for every sport. Suite Games 11.12.13 June 2026.',
   metadataBase: new URL('https://suite-marketplace.vercel.app'),
   openGraph: {
-    title: 'Suite Games 2026 / Volleyball UiTM Kuala Terengganu',
-    description: 'Official volleyball jerseys with custom name and number.',
+    title: 'Suite Games 2026 / UiTM Kuala Terengganu',
+    description:
+      'Official kit drop for UiTM KT athletes — custom jerseys and a track jacket for every sport.',
     type: 'website',
   },
 };

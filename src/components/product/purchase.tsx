@@ -149,7 +149,7 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
             <Label>Status</Label>
             <div className="grid grid-cols-2 gap-px bg-line border border-line">
               {([
-                { v: 'player' as PlayerType, label: 'Volleyball player' },
+                { v: 'player' as PlayerType, label: 'Player' },
                 { v: 'non_player' as PlayerType, label: 'Non player' },
               ]).map((opt) => (
                 <button
@@ -165,7 +165,7 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
               ))}
             </div>
             <p className="mt-2 text-[12px] text-muted body-lede">
-              Only volleyball players need a unique squad number. Non players can share any digit.
+              Only players need a unique squad number. Non players can share any digit.
             </p>
           </div>
 

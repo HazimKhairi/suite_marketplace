@@ -1,8 +1,8 @@
 export const TEAM = {
-  id: 'vb_uitmkt',
-  short: 'VB UITMKT',
-  name: 'Volleyball · UiTM Kuala Terengganu',
-  fullName: 'UiTM Kuala Terengganu Volleyball',
+  id: 'suite_uitmkt',
+  short: 'SUITE UITMKT',
+  name: 'Suite · UiTM Kuala Terengganu',
+  fullName: 'UiTM Kuala Terengganu · Suite Games 2026',
   campus: 'UiTM Kuala Terengganu',
 } as const;
 

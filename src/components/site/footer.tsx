@@ -10,10 +10,10 @@ export function Footer() {
         <div className="col-span-2">
           <Logo size="md" />
           <p className="mt-6 font-display font-extrabold text-3xl leading-tight max-w-md">
-            The official kit of UiTM Kuala Terengganu volleyball.
+            The official kit drop for UiTM Kuala Terengganu athletes.
           </p>
           <p className="mt-3 body-lede max-w-md text-muted">
-            Short sleeve and long sleeve, with custom name and number on every order.
+            Custom jerseys with name and number, plus a track jacket built for every sport.
           </p>
         </div>
         <div>
@@ -21,7 +21,7 @@ export function Footer() {
           <ul className="space-y-2 text-[14px] list-none">
             <li>
               <Link href="/jerseys" className="hover:text-flame-red">
-                Browse jerseys
+                Browse the drop
               </Link>
             </li>
             <li>
