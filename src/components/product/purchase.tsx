@@ -310,6 +310,16 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
             )}
           </p>
         </div>
+        {isJacket && (
+          <div className="mb-2 border border-flame-red/40 bg-flame-red/5 px-3 py-2">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-flame-red">
+              Sizing runs slim — go up one size
+            </p>
+            <p className="mt-1 text-[12px] text-ink/80">
+              Usually wear S, pick M. Wear M, pick L. Same logic for the rest. Size chart below is the actual jacket measurement, not your usual fit.
+            </p>
+          </div>
+        )}
         <div className="grid grid-cols-5 sm:grid-cols-6 gap-px bg-line border border-line">
           {availableSizes.map((s) => {
             const sc = sizeSurcharge(s, product.category);
