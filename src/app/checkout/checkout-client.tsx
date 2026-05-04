@@ -1,10 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Check, MessageCircle, Minus, Plus, Trash2, Upload } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, MessageCircle, Minus, Plus, RotateCcw, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCart } from '@/lib/cart';
 import { formatMYR } from '@/lib/utils';
@@ -27,6 +27,58 @@ const BANK = {
   holder: process.env.NEXT_PUBLIC_BANK_HOLDER ?? 'MUHAMMAD HAZIM',
 };
 
+// Pending-order persistence — survives a tab kill while the user is in the QR
+// banking app. Window is generous so a slow payment doesn't drop the upload.
+const PENDING_ORDER_KEY = 'suite_pending_order_v1';
+const PENDING_ORDER_TTL_MS = 60 * 60 * 1000;
+
+type PendingOrder = { id: string; order_number: string; total_amount: number; ts: number };
+
+function readPendingOrder(): PendingOrder | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(PENDING_ORDER_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as PendingOrder;
+    if (!parsed?.id || Date.now() - (parsed.ts ?? 0) > PENDING_ORDER_TTL_MS) {
+      localStorage.removeItem(PENDING_ORDER_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function writePendingOrder(o: { id: string; order_number: string; total_amount: number }) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(
+      PENDING_ORDER_KEY,
+      JSON.stringify({ ...o, ts: Date.now() } satisfies PendingOrder),
+    );
+  } catch {
+    // ignore quota / privacy mode
+  }
+}
+
+function clearPendingOrder() {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(PENDING_ORDER_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+function formatRelative(ts: number) {
+  const diffMin = Math.max(0, Math.floor((Date.now() - ts) / 60000));
+  if (diffMin < 1) return 'just now';
+  if (diffMin === 1) return '1 minute ago';
+  if (diffMin < 60) return `${diffMin} minutes ago`;
+  return 'over an hour ago';
+}
+
 export function CheckoutClient() {
   const router = useRouter();
   const { items, setQty, remove, subtotal, ready, clear } = useCart();
@@ -42,6 +94,7 @@ export function CheckoutClient() {
   const [order, setOrder] = useState<{ id: string; order_number: string; total_amount: number } | null>(
     null,
   );
+  const [resumedAt, setResumedAt] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadResult, setUploadResult] = useState<
@@ -54,6 +107,21 @@ export function CheckoutClient() {
   >(null);
 
   const MAX_RECEIPT_ATTEMPTS = 5;
+
+  // On mount: if user was halfway through a payment (e.g. switched to banking app and the
+  // mobile browser killed the tab), pick the order back up at the upload step.
+  useEffect(() => {
+    if (!ready || order) return;
+    const pending = readPendingOrder();
+    if (!pending) return;
+    setOrder({
+      id: pending.id,
+      order_number: pending.order_number,
+      total_amount: pending.total_amount,
+    });
+    setResumedAt(pending.ts);
+    setStep('payment');
+  }, [ready, order]);
 
   const total = subtotal;
 
@@ -114,6 +182,7 @@ export function CheckoutClient() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? 'Failed');
       setOrder(json);
+      writePendingOrder(json);
       setStep('payment');
       toast.success(`Order created. ${json.order_number}`);
     } catch (e) {
@@ -136,6 +205,7 @@ export function CheckoutClient() {
       setUploadResult(json);
       toast.success('Receipt received. Pending admin review.');
       clear();
+      clearPendingOrder();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Upload failed');
     } finally {
@@ -171,6 +241,35 @@ export function CheckoutClient() {
           <Stepper active={step} step="payment" label="03 Pay" />
         </div>
       </div>
+
+      {resumedAt && order && !uploadResult && (
+        <div className="mb-8 border border-flame-purple bg-flame-purple/5 px-5 py-4 flex items-start sm:items-center gap-4 flex-wrap">
+          <RotateCcw className="w-4 h-4 text-flame-purple shrink-0 mt-0.5 sm:mt-0" strokeWidth={1.5} />
+          <div className="flex-1 min-w-0">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-flame-purple">
+              Resuming order {order.order_number}
+            </p>
+            <p className="mt-1 text-[13px] body-lede text-ink-soft">
+              Started {formatRelative(resumedAt)}. Finish payment and upload your receipt below — your
+              order is held in our system.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              clearPendingOrder();
+              setOrder(null);
+              setResumedAt(null);
+              setStep('review');
+              setSelectedFile(null);
+              setUploadResult(null);
+            }}
+            className="text-[12px] font-mono uppercase tracking-[0.14em] text-muted hover:text-flame-red transition-colors"
+          >
+            Start fresh →
+          </button>
+        </div>
+      )}
 
       <div className="grid grid-cols-12 gap-10 lg:gap-16">
         <div className="col-span-12 lg:col-span-7">
