@@ -51,8 +51,8 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
 
   const max = Math.max(1, product.stock);
   const outOfStock = product.stock === 0;
-  const surcharge = sizeSurcharge(size);
-  const unit = effectiveUnitPrice(Number(product.price), size);
+  const surcharge = sizeSurcharge(size, product.category);
+  const unit = effectiveUnitPrice(Number(product.price), size, product.category);
 
   const trimmedNumber = number.trim();
   const trimmedName = name.trim().toUpperCase();
@@ -190,14 +190,22 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
         <div className="flex items-baseline justify-between mb-2">
           <Label className="mb-0">Size</Label>
           <p className="text-[11px] font-mono uppercase tracking-[0.14em] text-muted">
-            3XL to 6XL <span className="text-flame-red">+RM 5</span>
-            <span className="mx-2 text-line">/</span>
-            7XL to 8XL <span className="text-flame-red">+RM 10</span>
+            {isJacket ? (
+              <>
+                3XL and up <span className="text-flame-red">+RM 15</span>
+              </>
+            ) : (
+              <>
+                3XL to 6XL <span className="text-flame-red">+RM 5</span>
+                <span className="mx-2 text-line">/</span>
+                7XL to 8XL <span className="text-flame-red">+RM 10</span>
+              </>
+            )}
           </p>
         </div>
         <div className="grid grid-cols-5 sm:grid-cols-6 gap-px bg-line border border-line">
           {availableSizes.map((s) => {
-            const sc = sizeSurcharge(s);
+            const sc = sizeSurcharge(s, product.category);
             return (
               <button
                 key={s}
@@ -251,7 +259,7 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
           </div>
           {surcharge > 0 && (
             <p className="text-[12px] font-mono uppercase tracking-[0.14em] text-flame-red">
-              {size} surcharge {surchargeLabel(size)}
+              {size} surcharge {surchargeLabel(size, product.category)}
             </p>
           )}
           {product.stock < 10 && product.stock > 0 && (

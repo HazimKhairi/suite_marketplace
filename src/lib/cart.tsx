@@ -76,7 +76,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const count = items.reduce((s, i) => s + i.quantity, 0);
   const subtotal = items.reduce(
-    (s, i) => s + effectiveUnitPrice(i.unit_price, i.size) * i.quantity,
+    (s, i) => s + effectiveUnitPrice(i.unit_price, i.size, i.category) * i.quantity,
     0,
   );
 

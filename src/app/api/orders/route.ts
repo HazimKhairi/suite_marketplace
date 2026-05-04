@@ -146,7 +146,11 @@ export async function POST(req: Request) {
       }
     }
 
-    const unitWithSurcharge = effectiveUnitPrice(Number(p.price), item.size);
+    const unitWithSurcharge = effectiveUnitPrice(
+      Number(p.price),
+      item.size,
+      p.category as 'jersey' | 'jacket',
+    );
     const lineTotal = unitWithSurcharge * item.quantity;
     subtotal += lineTotal;
 

@@ -176,7 +176,7 @@ export function CheckoutClient() {
           {step === 'review' && (
             <div className="border border-line">
               {items.map((i) => {
-                const eff = effectiveUnitPrice(i.unit_price, i.size);
+                const eff = effectiveUnitPrice(i.unit_price, i.size, i.category);
                 return (
                   <div
                     key={i.lineId}
@@ -217,9 +217,9 @@ export function CheckoutClient() {
                               <span className="opacity-60 mx-1">/</span>#{i.player_number}
                             </p>
                           )}
-                          {surchargeLabel(i.size) && (
+                          {surchargeLabel(i.size, i.category) && (
                             <p className="mt-2 text-[11px] font-mono text-flame-red">
-                              {i.size} surcharge {surchargeLabel(i.size)}
+                              {i.size} surcharge {surchargeLabel(i.size, i.category)}
                             </p>
                           )}
                         </div>

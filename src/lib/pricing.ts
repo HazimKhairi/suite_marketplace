@@ -14,8 +14,26 @@ export const SIZES = [
 
 export type Size = (typeof SIZES)[number];
 
-export function sizeSurcharge(size: string): number {
-  switch (size.toUpperCase()) {
+type Category = 'jersey' | 'jacket';
+
+export function sizeSurcharge(size: string, category: Category = 'jersey'): number {
+  const s = size.toUpperCase();
+  if (category === 'jacket') {
+    // Jacket: flat +RM 15 for any plus size (3XL and up).
+    switch (s) {
+      case '3XL':
+      case '4XL':
+      case '5XL':
+      case '6XL':
+      case '7XL':
+      case '8XL':
+        return 15;
+      default:
+        return 0;
+    }
+  }
+  // Jersey: 3XL-6XL +RM 5, 7XL-8XL +RM 10.
+  switch (s) {
     case '3XL':
     case '4XL':
     case '5XL':
@@ -29,15 +47,24 @@ export function sizeSurcharge(size: string): number {
   }
 }
 
-export function effectiveUnitPrice(basePrice: number, size: string): number {
-  return Number(basePrice) + sizeSurcharge(size);
+export function effectiveUnitPrice(
+  basePrice: number,
+  size: string,
+  category: Category = 'jersey',
+): number {
+  return Number(basePrice) + sizeSurcharge(size, category);
 }
 
-export function lineSubtotal(basePrice: number, size: string, qty: number): number {
-  return effectiveUnitPrice(basePrice, size) * qty;
+export function lineSubtotal(
+  basePrice: number,
+  size: string,
+  qty: number,
+  category: Category = 'jersey',
+): number {
+  return effectiveUnitPrice(basePrice, size, category) * qty;
 }
 
-export function surchargeLabel(size: string): string {
-  const s = sizeSurcharge(size);
+export function surchargeLabel(size: string, category: Category = 'jersey'): string {
+  const s = sizeSurcharge(size, category);
   return s > 0 ? `+RM ${s}.00` : '';
 }

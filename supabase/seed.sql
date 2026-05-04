@@ -1,7 +1,8 @@
 -- Volleyball UiTM Kuala Terengganu official drop
--- Jersey only for the current drop. Custom name and number per line.
--- Sizes 3XL through 6XL carry a +RM5 surcharge; 7XL and 8XL carry +RM10.
--- Four variants: white/black × short/long. Run with `on conflict (slug)` so it is idempotent.
+-- Jersey: custom name and number per line. 3XL-6XL +RM5, 7XL-8XL +RM10.
+-- Jacket: no personalisation. Plus sizes (3XL and up) flat +RM15.
+-- Four jersey variants (white/black × short/long) plus the white track jacket.
+-- Run with `on conflict (slug)` so it is idempotent.
 
 insert into public.products (slug, name, category, sleeve_type, color, price, stock, image_url, description, sizes) values
   (
