@@ -5,6 +5,7 @@ import { createAdminClient } from '@/lib/supabase/server';
 import { TEAM, ORG_CONTACT } from '@/lib/teams';
 import { formatMYR } from '@/lib/utils';
 import type { Product } from '@/lib/types';
+import { PixelAvatar } from '@/components/site/pixel-avatar';
 
 export const revalidate = 60;
 
@@ -405,25 +406,19 @@ export default async function Home() {
               />
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute -inset-1.5 rounded-full border border-flame-red/40 group-hover/avatar:border-flame-red transition-colors animate-spin-slow"
+                className="pointer-events-none absolute -inset-2 border-2 border-dashed border-flame-red/40 group-hover/avatar:border-flame-red transition-colors animate-spin-slow"
               />
-              <span className="relative block w-44 h-44 sm:w-52 sm:h-52 rounded-full overflow-hidden border-2 border-canvas/20 group-hover/avatar:border-flame-red transition-all duration-500 group-hover/avatar:rotate-[-2deg]">
-                <Image
-                  src="/branding/hazim.png"
-                  alt="Hazim — hazimdev"
-                  fill
-                  sizes="(max-width: 640px) 176px, 208px"
-                  className="object-cover transition-transform duration-700 group-hover/avatar:scale-105"
-                />
+              <span className="relative block w-44 h-44 sm:w-52 sm:h-52 bg-canvas border-2 border-canvas/20 group-hover/avatar:border-flame-red transition-all duration-500 group-hover/avatar:rotate-[-2deg] overflow-hidden flex items-center justify-center p-3 [image-rendering:pixelated]">
+                <PixelAvatar className="w-full h-full transition-transform duration-700 group-hover/avatar:scale-110" />
               </span>
 
               <span
                 aria-hidden="true"
-                className="absolute -top-2 -right-2 inline-flex items-center justify-center w-9 h-9 rounded-full bg-flame-red text-canvas font-mono text-[10px] uppercase tracking-[0.14em] shadow-lg group-hover/avatar:scale-110 transition-transform"
+                className="absolute -top-3 -right-3 inline-flex items-center justify-center w-10 h-10 bg-flame-red text-canvas font-mono text-[10px] uppercase tracking-[0.14em] shadow-lg group-hover/avatar:scale-110 transition-transform"
               >
                 <span className="relative inline-flex w-2 h-2">
-                  <span className="absolute inline-flex w-full h-full rounded-full bg-canvas opacity-75 animate-ping" />
-                  <span className="relative inline-flex w-2 h-2 rounded-full bg-canvas" />
+                  <span className="absolute inline-flex w-full h-full bg-canvas opacity-75 animate-ping" />
+                  <span className="relative inline-flex w-2 h-2 bg-canvas" />
                 </span>
               </span>
 
