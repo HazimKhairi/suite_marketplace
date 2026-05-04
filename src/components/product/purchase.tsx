@@ -195,10 +195,10 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
                 type="password"
                 value={passcode}
                 onChange={(e) => setPasscode(e.target.value)}
-                placeholder="Ask your team manager"
+                placeholder="Ask your team manager or admin"
                 autoComplete="off"
                 spellCheck={false}
-                className={`uppercase font-mono tracking-[0.18em] ${
+                className={`uppercase font-mono text-[13px] tracking-[0.14em] placeholder:text-[11px] placeholder:tracking-[0.08em] placeholder:normal-case ${
                   passcodeAttempted && !passcodeOk
                     ? 'border-flame-red focus:border-flame-red'
                     : passcodeOk
