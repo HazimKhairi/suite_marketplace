@@ -73,7 +73,7 @@ export default async function Home() {
               </h1>
               <p className="rise rise-3 mt-8 max-w-xl body-lede text-[18px] text-ink-soft">
                 The official kit drop for UiTM Kuala Terengganu athletes. Custom jerseys printed
-                with your own name and number, plus a track jacket built for every sport. Pick
+                with your own name and number, plus a track jacket reserved for the squad. Pick
                 your kit, drop your name on the back, hit the court.
               </p>
               <div className="rise rise-4 mt-10 flex flex-wrap items-center gap-4">
@@ -122,7 +122,7 @@ export default async function Home() {
                   {TEAM.fullName}
                 </p>
                 <p className="font-display font-extrabold text-2xl mt-2 leading-tight">
-                  Suitable for all athletes.
+                  Reserved for the squad.
                 </p>
                 <div className="mt-5 flex items-center justify-between gap-4 border-t border-line pt-4">
                   <span className="bg-ink text-canvas px-3 py-2 text-[10px] font-mono uppercase tracking-[0.16em]">
@@ -192,7 +192,7 @@ export default async function Home() {
           </div>
           <div className="col-span-12 md:col-span-5 body-lede text-muted text-[15px]">
             Jerseys in black or white, short or long, with your name and number on the back. Plus a
-            track jacket suitable for all athletes. Hit the court at Suite Games 11.12.13 June.
+            track jacket reserved for the squad. Hit the court at Suite Games 11.12.13 June.
           </div>
         </div>
 
@@ -305,7 +305,7 @@ export default async function Home() {
                           {p.name}
                         </p>
                         <p className="mt-4 max-w-xl body-lede text-[14px] text-muted">
-                          Suitable for all athletes. Full zip, warm-up ready, no custom name and
+                          Squad players only. Full zip, warm-up ready, no custom name and
                           number.
                         </p>
                       </div>

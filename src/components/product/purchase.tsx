@@ -49,6 +49,7 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
   const [number, setNumber] = useState('');
   const [playerType, setPlayerType] = useState<PlayerType>('player');
   const [adding, setAdding] = useState(false);
+  const [confirmedSquad, setConfirmedSquad] = useState(false);
 
   const max = Math.max(1, product.stock);
   const outOfStock = product.stock === 0;
@@ -70,6 +71,8 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
       errors.push('Player number (1 to 3 digits or leave blank)');
     }
     if (numberConflict) errors.push(`Number ${trimmedNumber} is taken by ${existingClaimant}`);
+  } else if (!confirmedSquad) {
+    errors.push('Confirm you are a UiTM KT squad player');
   }
 
   function build(): Omit<CartItem, 'lineId'> {
@@ -87,7 +90,8 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
       unit_price: Number(product.price),
       player_name: isJacket ? null : cleanedName || null,
       player_number: isJacket ? null : cleanedNumber || null,
-      player_type: isJacket ? null : playerType,
+      // Jacket buyers self-attest as squad players, so the order line records that intent.
+      player_type: isJacket ? 'player' : playerType,
     };
   }
 
@@ -115,6 +119,41 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
 
   return (
     <div className="space-y-7">
+      {isJacket && (
+        <label
+          className={`block border-2 cursor-pointer transition-colors p-5 ${
+            confirmedSquad
+              ? 'border-leaf bg-leaf/5'
+              : 'border-flame-red bg-flame-red/5 hover:border-ink'
+          }`}
+        >
+          <div className="flex items-start gap-4">
+            <input
+              type="checkbox"
+              checked={confirmedSquad}
+              onChange={(e) => setConfirmedSquad(e.target.checked)}
+              className="mt-1 w-4 h-4 accent-flame-red shrink-0"
+            />
+            <div className="flex-1">
+              <p
+                className={`font-mono text-[10px] uppercase tracking-[0.18em] ${
+                  confirmedSquad ? 'text-leaf' : 'text-flame-red'
+                }`}
+              >
+                Squad players only
+              </p>
+              <p className="mt-2 font-display font-extrabold text-xl leading-tight">
+                Reserved for the UiTM KT squad.
+              </p>
+              <p className="mt-2 text-[13px] body-lede text-muted">
+                Limited drop. Tick to confirm you&rsquo;re an active squad player before adding to
+                cart. Non players, please grab a jersey instead.
+              </p>
+            </div>
+          </div>
+        </label>
+      )}
+
       {!isJacket && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4">
