@@ -61,12 +61,6 @@ export default async function Home() {
 
   return (
     <div>
-      <div className="border-b border-line bg-paper">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-center">
-          <PixelMascot />
-        </div>
-      </div>
-
       <section className="relative">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 lg:pt-20 pb-24 lg:pb-32">
           <div className="grid grid-cols-12 gap-6 lg:gap-12 items-end">
@@ -105,7 +99,8 @@ export default async function Home() {
               </div>
             </div>
 
-            <div className="col-span-12 lg:col-span-5">
+            <div className="col-span-12 lg:col-span-5 relative">
+              <PixelMascot />
               <div className="relative aspect-[4/5] bg-paper border border-line overflow-hidden rise rise-3">
                 <Image
                   src="/jerseys/jacket_white.png"

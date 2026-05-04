@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 
-// 18-column × 18-row pixel art of a graduating Hazim — cap + suit + red tie.
+// 18×18 pixel art Hazim with grad cap, navy blazer, red tie.
 const ROWS = [
   '..................',
   '......YYYYYYY.....',
@@ -25,37 +25,54 @@ const ROWS = [
 ];
 
 const COLORS: Record<string, string> = {
-  Y: '#f5c542', // mortarboard top — yellow
-  C: '#5b3a1f', // cap brim band
-  H: '#2b1810', // hair
-  S: '#d9a87a', // skin
-  E: '#1a1a1a', // eyes
-  M: '#5b3a1f', // mouth
-  W: '#f3efe6', // shirt collar
-  R: '#d92929', // red tie
-  B: '#1a2238', // navy blazer
+  Y: '#f5c542',
+  C: '#5b3a1f',
+  H: '#2b1810',
+  S: '#d9a87a',
+  E: '#1a1a1a',
+  M: '#5b3a1f',
+  W: '#f3efe6',
+  R: '#d92929',
+  B: '#1a2238',
 };
+
+// Default (clicks=0) shows "Click me!". Each subsequent click cycles forward.
+const DIALOGUE = [
+  'Click me!',
+  'Hello, saya Hazim!',
+  'Auch! Stop it',
+  'Eh seriously stop',
+  'Beli jacket tu lahh',
+  'RM 80 je sayang',
+  'Bukan main pakat tekan',
+  'Saya dah penat',
+  'OK saya merajuk',
+  'Click jacket bukan saya',
+];
 
 const COLS = ROWS[0].length;
 const TOTAL_ROWS = ROWS.length;
 
 export function PixelMascot() {
+  const [clicks, setClicks] = useState(0);
   const [bouncing, setBouncing] = useState(false);
-  const [showToing, setShowToing] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
+
+  const idx = clicks % DIALOGUE.length;
+  const message = DIALOGUE[idx];
 
   const playToing = () => {
     try {
       const Ctor =
         typeof window !== 'undefined'
-          ? window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+          ? window.AudioContext ??
+            (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
           : null;
       if (!Ctor) return;
       if (!audioCtxRef.current) audioCtxRef.current = new Ctor();
       const ctx = audioCtxRef.current;
       const now = ctx.currentTime;
 
-      // Two quick chirps — "toing-toing"
       const chirps = [
         { start: 0, fStart: 700, fPeak: 1500, fEnd: 350 },
         { start: 0.18, fStart: 600, fPeak: 1300, fEnd: 300 },
@@ -80,33 +97,32 @@ export function PixelMascot() {
         osc.stop(t0 + 0.2);
       }
     } catch {
-      // Silently ignore — autoplay or unsupported context.
+      // ignore
     }
   };
 
   const handleClick = () => {
     playToing();
+    setClicks((c) => c + 1);
     setBouncing(true);
-    setShowToing(true);
     window.setTimeout(() => setBouncing(false), 600);
-    window.setTimeout(() => setShowToing(false), 900);
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      aria-label="Hi, saya Hazim — tap untuk bunyi toing toing"
-      className="group relative inline-flex items-center justify-center select-none focus:outline-none"
-    >
-      <span className="relative inline-block">
+    <div className="absolute -top-8 left-3 sm:left-5 z-20 flex items-start gap-2 pointer-events-none">
+      <button
+        type="button"
+        onClick={handleClick}
+        aria-label={`Hazim pixel mascot — ${message}`}
+        className="group relative pointer-events-auto select-none focus:outline-none"
+      >
         <svg
           viewBox={`0 0 ${COLS} ${TOTAL_ROWS}`}
           shapeRendering="crispEdges"
           preserveAspectRatio="xMidYMid meet"
           aria-hidden="true"
-          className={`w-12 h-12 sm:w-14 sm:h-14 origin-bottom transition-transform ${
-            bouncing ? 'animate-mascot-bounce' : 'group-hover:-translate-y-0.5'
+          className={`w-14 h-14 sm:w-16 sm:h-16 origin-bottom transition-transform ${
+            bouncing ? 'animate-mascot-bounce' : 'animate-mascot-idle group-hover:scale-110'
           }`}
         >
           {ROWS.map((row, y) =>
@@ -117,20 +133,37 @@ export function PixelMascot() {
             }),
           )}
         </svg>
+      </button>
 
-        {showToing && (
+      {/* Speech bubble — re-mounts on every click so animation re-fires */}
+      <div
+        key={clicks}
+        className="relative mt-2 animate-bubble-pop pointer-events-none select-none"
+      >
+        <div className="relative bg-canvas border border-ink shadow-[3px_3px_0_0] shadow-ink px-3 py-1.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.14em] whitespace-nowrap text-ink">
+          {message}
+          {/* Tail outline (ink) sitting on the bubble's left edge */}
           <span
             aria-hidden="true"
-            className="absolute -top-3 left-full ml-1 font-mono text-[10px] uppercase tracking-[0.18em] text-flame-red animate-toing-pop"
-          >
-            TOING!
-          </span>
-        )}
-      </span>
-
-      <span className="ml-3 hidden sm:inline-block font-mono text-[10px] uppercase tracking-[0.18em] text-muted group-hover:text-flame-red transition-colors">
-        Hi, saya Hazim — tap me
-      </span>
-    </button>
+            className="absolute right-full top-2 w-0 h-0"
+            style={{
+              borderTop: '5px solid transparent',
+              borderBottom: '5px solid transparent',
+              borderRight: '7px solid #1a1a1a',
+            }}
+          />
+          {/* Tail fill (canvas) overlapping the outline by 1px so the bubble looks attached */}
+          <span
+            aria-hidden="true"
+            className="absolute right-full top-2 w-0 h-0 translate-x-px"
+            style={{
+              borderTop: '5px solid transparent',
+              borderBottom: '5px solid transparent',
+              borderRight: '7px solid #f3efe6',
+            }}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
