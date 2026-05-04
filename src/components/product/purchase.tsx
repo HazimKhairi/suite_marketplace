@@ -72,7 +72,7 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
     }
     if (numberConflict) errors.push(`Number ${trimmedNumber} is taken by ${existingClaimant}`);
   } else if (!confirmedSquad) {
-    errors.push('Confirm you are a UiTM KT squad player');
+    errors.push('Confirm you are a Suite Games athlete');
   }
 
   function build(): Omit<CartItem, 'lineId'> {
@@ -140,14 +140,15 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
                   confirmedSquad ? 'text-leaf' : 'text-flame-red'
                 }`}
               >
-                Squad players only
+                Suite Games athletes only
               </p>
               <p className="mt-2 font-display font-extrabold text-xl leading-tight">
-                Reserved for the UiTM KT squad.
+                Only available for SUITE&rsquo;s athletes.
               </p>
               <p className="mt-2 text-[13px] body-lede text-muted">
-                Limited drop. Tick to confirm you&rsquo;re an active squad player before adding to
-                cart. Non players, please grab a jersey instead.
+                Limited drop. Tick to confirm you&rsquo;re an athlete competing at Suite Games
+                11.12.13 June 2026 before adding to cart. Non-athletes, please grab a jersey
+                instead.
               </p>
             </div>
           </div>

@@ -62,7 +62,7 @@ insert into public.products (slug, name, category, sleeve_type, color, price, st
     80.00,
     50,
     '/jerseys/jacket_white.png',
-    'Official UiTM Kuala Terengganu track jacket. Full zip, reserved for the squad — warm-ups, podium, post-match. No custom name and number.',
+    'Official Suite Games 2026 track jacket. Full zip, only available for SUITE''s athletes — warm-ups, podium, post-match. No custom name and number.',
     array['S','M','L','XL','XXL','3XL','4XL','5XL','6XL','7XL','8XL']
   )
 on conflict (slug) do update set

@@ -43,12 +43,12 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: 'Suite Games 2026 / UiTM Kuala Terengganu',
   description:
-    'Official kit drop for UiTM Kuala Terengganu athletes. Custom jerseys with name and number, plus a squad-only track jacket. Suite Games 11.12.13 June 2026.',
+    'Official kit drop for UiTM Kuala Terengganu athletes. Custom jerseys with name and number, plus a track jacket only available for SUITE\'s athletes. Suite Games 11.12.13 June 2026.',
   metadataBase: new URL('https://suite-marketplace.vercel.app'),
   openGraph: {
     title: 'Suite Games 2026 / UiTM Kuala Terengganu',
     description:
-      'Official kit drop for UiTM KT athletes — custom jerseys and a squad-only track jacket.',
+      'Official kit drop for UiTM KT athletes — custom jerseys and a track jacket only available for SUITE\'s athletes.',
     type: 'website',
   },
 };

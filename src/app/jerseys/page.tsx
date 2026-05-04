@@ -33,7 +33,8 @@ export default async function JerseysPage() {
           <p className="eyebrow">Catalog / {String(products.length).padStart(2, '0')} items</p>
           <h1 className="h-display text-[64px] md:text-[112px] mt-4">{TEAM.short}.</h1>
           <p className="mt-4 body-lede text-muted max-w-md text-[15px]">
-            {TEAM.fullName}. Custom jerseys with name and number, plus a squad-only track jacket.
+            {TEAM.fullName}. Custom jerseys with name and number, plus a track jacket only
+            available for SUITE&rsquo;s athletes.
           </p>
         </div>
       </div>

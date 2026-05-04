@@ -13,7 +13,7 @@ export function Footer() {
             The official kit drop for UiTM Kuala Terengganu athletes.
           </p>
           <p className="mt-3 body-lede max-w-md text-muted">
-            Custom jerseys with name and number, plus a squad-only track jacket.
+            Custom jerseys with name and number, plus a track jacket only available for SUITE&rsquo;s athletes.
           </p>
         </div>
         <div>
