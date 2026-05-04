@@ -1,8 +1,7 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-// 18×18 pixel art Hazim with grad cap, navy blazer, red tie.
 const ROWS = [
   '..................',
   '......YYYYYYY.....',
@@ -36,9 +35,7 @@ const COLORS: Record<string, string> = {
   B: '#1a2238',
 };
 
-// Default (clicks=0) shows "Click me!". Each subsequent click cycles forward.
 const DIALOGUE = [
-  'Click me!',
   'Hello, saya Hazim!',
   'Auch! Stop it',
   'Eh seriously stop',
@@ -56,10 +53,20 @@ const TOTAL_ROWS = ROWS.length;
 export function PixelMascot() {
   const [clicks, setClicks] = useState(0);
   const [bouncing, setBouncing] = useState(false);
+  const [bubble, setBubble] = useState<string | null>(null);
+  const [thinking, setThinking] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const hideTimerRef = useRef<number | null>(null);
 
-  const idx = clicks % DIALOGUE.length;
-  const message = DIALOGUE[idx];
+  // Occasional "thinking" puff when the user has been idle.
+  useEffect(() => {
+    if (clicks > 0) return; // user already engaged — stop the nudge
+    const tick = window.setInterval(() => {
+      setThinking(true);
+      window.setTimeout(() => setThinking(false), 1600);
+    }, 9000);
+    return () => window.clearInterval(tick);
+  }, [clicks]);
 
   const playToing = () => {
     try {
@@ -103,17 +110,30 @@ export function PixelMascot() {
 
   const handleClick = () => {
     playToing();
-    setClicks((c) => c + 1);
+    const next = clicks + 1;
+    setClicks(next);
+    setThinking(false);
     setBouncing(true);
+    setBubble(DIALOGUE[(next - 1) % DIALOGUE.length]);
+
+    if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = window.setTimeout(() => {
+      setBubble(null);
+    }, 3200);
+
     window.setTimeout(() => setBouncing(false), 600);
   };
+
+  // Bubble that's currently rendered (full message > thinking puff).
+  const visibleBubble = bubble ?? (thinking ? '...' : null);
+  const bubbleKey = bubble ? `msg-${clicks}` : thinking ? 'think' : 'none';
 
   return (
     <div className="absolute -top-8 left-3 sm:left-5 z-20 flex items-start gap-2 pointer-events-none">
       <button
         type="button"
         onClick={handleClick}
-        aria-label={`Hazim pixel mascot — ${message}`}
+        aria-label="Hazim pixel mascot — tap untuk borak"
         className="group relative pointer-events-auto select-none focus:outline-none"
       >
         <svg
@@ -129,41 +149,48 @@ export function PixelMascot() {
             row.split('').map((ch, x) => {
               const fill = COLORS[ch];
               if (!fill) return null;
-              return <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" fill={fill} />;
+              const isEye = ch === 'E';
+              return (
+                <rect
+                  key={`${x}-${y}`}
+                  x={x}
+                  y={y}
+                  width="1"
+                  height="1"
+                  fill={fill}
+                  className={isEye ? 'mascot-eye' : undefined}
+                />
+              );
             }),
           )}
         </svg>
       </button>
 
-      {/* Speech bubble — re-mounts on every click so animation re-fires */}
-      <div
-        key={clicks}
-        className="relative mt-2 animate-bubble-pop pointer-events-none select-none"
-      >
-        <div className="relative bg-canvas border border-ink shadow-[3px_3px_0_0] shadow-ink px-3 py-1.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.14em] whitespace-nowrap text-ink">
-          {message}
-          {/* Tail outline (ink) sitting on the bubble's left edge */}
-          <span
-            aria-hidden="true"
-            className="absolute right-full top-2 w-0 h-0"
-            style={{
-              borderTop: '5px solid transparent',
-              borderBottom: '5px solid transparent',
-              borderRight: '7px solid #1a1a1a',
-            }}
-          />
-          {/* Tail fill (canvas) overlapping the outline by 1px so the bubble looks attached */}
-          <span
-            aria-hidden="true"
-            className="absolute right-full top-2 w-0 h-0 translate-x-px"
-            style={{
-              borderTop: '5px solid transparent',
-              borderBottom: '5px solid transparent',
-              borderRight: '7px solid #f3efe6',
-            }}
-          />
+      {visibleBubble && (
+        <div key={bubbleKey} className="relative mt-2 animate-bubble-pop pointer-events-none select-none">
+          <div className="relative bg-canvas border border-ink shadow-[3px_3px_0_0] shadow-ink px-3 py-1.5 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.14em] whitespace-nowrap text-ink">
+            {visibleBubble}
+            <span
+              aria-hidden="true"
+              className="absolute right-full top-2 w-0 h-0"
+              style={{
+                borderTop: '5px solid transparent',
+                borderBottom: '5px solid transparent',
+                borderRight: '7px solid #1a1a1a',
+              }}
+            />
+            <span
+              aria-hidden="true"
+              className="absolute right-full top-2 w-0 h-0 translate-x-px"
+              style={{
+                borderTop: '5px solid transparent',
+                borderBottom: '5px solid transparent',
+                borderRight: '7px solid #f3efe6',
+              }}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
