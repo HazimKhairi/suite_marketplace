@@ -30,7 +30,9 @@ export default async function AdminOrdersPage({
   const supabase = createAdminClient();
   let q = supabase
     .from('orders')
-    .select('id, order_number, customer_name, customer_phone, total_amount, status, created_at, ocr_match')
+    .select(
+      'id, order_number, customer_name, customer_phone, total_amount, status, created_at, ocr_match, order_items(player_name, player_number, category)',
+    )
     .order('created_at', { ascending: false })
     .limit(100);
 
@@ -98,33 +100,60 @@ export default async function AdminOrdersPage({
           {(!orders || orders.length === 0) && (
             <div className="p-10 text-center text-muted text-[14px]">No orders here yet.</div>
           )}
-          {orders?.map((o) => (
-            <Link
-              key={o.id}
-              href={`/admin/orders/${o.id}`}
-              className="grid grid-cols-12 gap-3 px-5 py-4 border-b border-line last:border-b-0 hover:bg-paper transition-colors items-center"
-            >
-              <div className="col-span-3 font-mono text-[12px] min-w-0">
-                <p className="tracking-wider truncate">{o.order_number}</p>
-              </div>
-              <div className="col-span-3 min-w-0">
-                <p className="text-[14px] truncate">{o.customer_name}</p>
-                <p className="text-[12px] text-muted font-mono truncate">{o.customer_phone}</p>
-              </div>
-              <div className="col-span-2">
-                <Badge variant={STATUS[o.status as OrderStatus].tone}>
-                  {STATUS[o.status as OrderStatus].text}
-                </Badge>
-              </div>
-              <div className="col-span-2 font-mono text-[13px] whitespace-nowrap">
-                {formatMYR(Number(o.total_amount))}
-              </div>
-              <div className="col-span-2 text-right text-[12px] text-muted flex items-center justify-end gap-1 min-w-0">
-                <span className="truncate">{formatDate(o.created_at)}</span>
-                <ArrowUpRight className="w-3.5 h-3.5 shrink-0" strokeWidth={1.5} />
-              </div>
-            </Link>
-          ))}
+          {orders?.map((o) => {
+            const items =
+              (o.order_items as { player_name: string | null; player_number: string | null; category: string }[] | null) ??
+              [];
+            const players = items.filter(
+              (i) => i.category === 'jersey' && (i.player_name || i.player_number),
+            );
+            const hasJacket = items.some((i) => i.category === 'jacket');
+            return (
+              <Link
+                key={o.id}
+                href={`/admin/orders/${o.id}`}
+                className="grid grid-cols-12 gap-3 px-5 py-4 border-b border-line last:border-b-0 hover:bg-paper transition-colors items-center"
+              >
+                <div className="col-span-3 font-mono text-[12px] min-w-0">
+                  <p className="tracking-wider truncate">{o.order_number}</p>
+                </div>
+                <div className="col-span-3 min-w-0">
+                  <p className="text-[14px] truncate">{o.customer_name}</p>
+                  <p className="text-[12px] text-muted font-mono truncate">{o.customer_phone}</p>
+                  {(players.length > 0 || hasJacket) && (
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {players.map((p, i) => (
+                        <span
+                          key={i}
+                          className="inline-block bg-ink text-canvas px-2 py-0.5 font-mono text-[10px] tracking-wider"
+                        >
+                          {p.player_name || '—'}
+                          <span className="opacity-60 mx-1">·</span>#{p.player_number || '—'}
+                        </span>
+                      ))}
+                      {hasJacket && (
+                        <span className="inline-block border border-flame-purple text-flame-purple px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em]">
+                          Jacket
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="col-span-2">
+                  <Badge variant={STATUS[o.status as OrderStatus].tone}>
+                    {STATUS[o.status as OrderStatus].text}
+                  </Badge>
+                </div>
+                <div className="col-span-2 font-mono text-[13px] whitespace-nowrap">
+                  {formatMYR(Number(o.total_amount))}
+                </div>
+                <div className="col-span-2 text-right text-[12px] text-muted flex items-center justify-end gap-1 min-w-0">
+                  <span className="truncate">{formatDate(o.created_at)}</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 shrink-0" strokeWidth={1.5} />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
