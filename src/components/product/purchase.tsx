@@ -7,6 +7,7 @@ import { useCart } from '@/lib/cart';
 import { formatMYR } from '@/lib/utils';
 import { effectiveUnitPrice, sizeSurcharge, surchargeLabel, SIZES } from '@/lib/pricing';
 import { Input, Label } from '@/components/ui/input';
+import { SizeChart } from '@/components/product/size-chart';
 import type { Product, CartItem } from '@/lib/types';
 import type { PlayerType } from '@/lib/teams';
 import type { TakenPlayer } from '@/lib/players';
@@ -228,6 +229,9 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
               </button>
             );
           })}
+        </div>
+        <div className="mt-3">
+          <SizeChart selectedSize={size} />
         </div>
       </div>
 
