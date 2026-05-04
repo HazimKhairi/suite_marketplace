@@ -53,7 +53,7 @@ const DIALOGUE: { text: string; mood: Mood }[] = [
   { text: 'Auch! Stop it', mood: 'neutral' },
   { text: 'Eh seriously stop', mood: 'annoyed' },
   { text: 'Beli jacket tu lahh', mood: 'annoyed' },
-  { text: 'RM 80 je lahh', mood: 'angry' },
+  { text: 'RM 28 je lahh', mood: 'angry' },
   { text: 'Bukan main pakat tekan', mood: 'angry' },
   { text: 'Saya dah penat', mood: 'furious' },
   { text: 'OK saya merajuk', mood: 'furious' },
