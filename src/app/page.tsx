@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, MessageCircle } from 'lucide-react';
+import { ArrowRight, MessageCircle, Code2, ExternalLink } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/server';
 import { TEAM, ORG_CONTACT } from '@/lib/teams';
 import { formatMYR } from '@/lib/utils';
@@ -319,6 +319,72 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <section className="border-t border-line bg-ink text-canvas">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-24 lg:py-32 grid grid-cols-12 gap-6">
+          <div className="col-span-12 md:col-span-3">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-flame-red">
+              04 / Built by hazimdev
+            </p>
+          </div>
+          <div className="col-span-12 md:col-span-9">
+            <p className="font-display font-extrabold text-[32px] md:text-[56px] leading-tight">
+              I built this whole marketplace in a weekend for UiTM KT.{' '}
+              <span className="text-flame-red">Want one for your team, club, or event?</span>
+            </p>
+            <p className="mt-6 body-lede max-w-2xl text-[15px] text-canvas/70">
+              Custom kit storefront, QR payment with AI receipt verification, order tracking, admin
+              dashboard. Next.js, Supabase, deployed on Vercel. Same stack, same speed, your
+              branding. From RM 800 — turnaround in days, not months.
+            </p>
+
+            <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-px bg-canvas/15 border border-canvas/15">
+              <Pillar n="01" k="Storefront" v="Custom catalog, cart, checkout — all yours." />
+              <Pillar n="02" k="Automation" v="QR pay, AI receipt OCR, email + status flow." />
+              <Pillar n="03" k="Admin" v="Orders, products, exports, all in one place." />
+            </div>
+
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <a
+                href={`${ORG_CONTACT.whatsappUrl}?text=${encodeURIComponent(
+                  'Hi hazimdev, I saw Suite Marketplace and want one for my team. Boleh borak?',
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-flame-red text-canvas h-14 px-8 hover:bg-canvas hover:text-ink transition-colors"
+              >
+                <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
+                <span className="text-[15px] font-heading font-semibold">
+                  WhatsApp hazimdev
+                </span>
+              </a>
+              <a
+                href="https://hazimdev.com?utm_source=suite-marketplace&utm_medium=hero-cta"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 border border-canvas/30 h-14 px-8 hover:border-flame-red hover:text-flame-red transition-colors"
+              >
+                <Code2 className="w-4 h-4" strokeWidth={1.5} />
+                <span className="text-[15px] font-heading">hazimdev.com</span>
+                <ExternalLink className="w-3.5 h-3.5 opacity-60" strokeWidth={1.5} />
+              </a>
+            </div>
+            <p className="mt-4 text-[12px] font-mono uppercase tracking-[0.16em] text-canvas/50">
+              Next.js · Supabase · Tailwind · Vercel · Sonner · Lucide
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Pillar({ n, k, v }: { n: string; k: string; v: string }) {
+  return (
+    <div className="bg-ink p-6 lg:p-8">
+      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-flame-red">{n}</p>
+      <p className="font-display font-extrabold text-2xl mt-4">{k}</p>
+      <p className="mt-3 text-[13px] text-canvas/60 body-lede">{v}</p>
     </div>
   );
 }

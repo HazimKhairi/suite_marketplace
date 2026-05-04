@@ -11,6 +11,7 @@ import { formatMYR } from '@/lib/utils';
 import { effectiveUnitPrice, surchargeLabel } from '@/lib/pricing';
 import { Input, Label } from '@/components/ui/input';
 import { ORG_CONTACT } from '@/lib/teams';
+import { BuiltByBadge } from '@/components/site/built-by';
 
 type Step = 'review' | 'details' | 'payment';
 
@@ -498,6 +499,13 @@ export function CheckoutClient() {
                           <MessageCircle className="w-3.5 h-3.5" strokeWidth={1.5} />
                         </a>
                       </p>
+                    </div>
+
+                    <div className="mt-6 pt-5 border-t border-leaf/30 flex items-center justify-between flex-wrap gap-3">
+                      <p className="text-[11px] font-mono uppercase tracking-[0.14em] text-muted">
+                        Need a marketplace like this?
+                      </p>
+                      <BuiltByBadge />
                     </div>
                   </div>
                 )}

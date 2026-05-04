@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Input, Label } from '@/components/ui/input';
+import { BuiltByBadge } from '@/components/site/built-by';
 import { formatDate, formatMYR } from '@/lib/utils';
 import type { OrderStatus } from '@/lib/types';
 
@@ -226,6 +227,13 @@ export function TrackClient({
                   <p className="text-[14px] font-heading">{STATUS_LABEL[order.status].text}</p>
                 </div>
               )}
+            </div>
+
+            <div className="mt-10 flex items-center justify-between flex-wrap gap-3">
+              <p className="text-[11px] font-mono uppercase tracking-[0.16em] text-muted">
+                Like this tracking flow?
+              </p>
+              <BuiltByBadge />
             </div>
           </div>
         </div>
