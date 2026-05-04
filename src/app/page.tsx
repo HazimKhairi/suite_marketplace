@@ -344,32 +344,77 @@ export default async function Home() {
               <Pillar n="03" k="Admin" v="Orders, products, exports, all in one place." />
             </div>
 
-            <div className="mt-10 flex flex-wrap items-center gap-4">
+            <div className="mt-10 grid grid-cols-1 lg:grid-cols-5 gap-px bg-canvas/15 border border-canvas/15">
               <a
                 href={`${ORG_CONTACT.whatsappUrl}?text=${encodeURIComponent(
                   'Hi hazimdev, I saw Suite Marketplace and want one for my team. Boleh borak?',
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 bg-flame-red text-canvas h-14 px-8 hover:bg-canvas hover:text-ink transition-colors"
+                className="group lg:col-span-3 bg-flame-red hover:bg-canvas hover:text-ink transition-colors p-6 lg:p-8 flex items-center justify-between gap-6"
               >
-                <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
-                <span className="text-[15px] font-heading font-semibold">
-                  WhatsApp hazimdev
+                <div className="flex items-start gap-4">
+                  <span className="relative inline-flex w-2.5 h-2.5 mt-2 shrink-0">
+                    <span className="absolute inline-flex w-full h-full rounded-full bg-canvas group-hover:bg-flame-red opacity-75 animate-ping" />
+                    <span className="relative inline-flex w-2.5 h-2.5 rounded-full bg-canvas group-hover:bg-flame-red" />
+                  </span>
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-canvas/80 group-hover:text-muted">
+                      Available now · usually replies under 1h
+                    </p>
+                    <p className="font-display font-extrabold text-3xl lg:text-4xl mt-2 leading-tight">
+                      Let&rsquo;s build yours.
+                    </p>
+                    <p className="mt-2 text-[13px] font-mono uppercase tracking-[0.14em] text-canvas/80 group-hover:text-muted">
+                      WhatsApp · {ORG_CONTACT.phoneDisplay}
+                    </p>
+                  </div>
+                </div>
+                <span className="shrink-0 inline-flex items-center justify-center w-14 h-14 border border-canvas/40 group-hover:border-ink group-hover:bg-ink group-hover:text-canvas transition-all">
+                  <ArrowRight
+                    className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                    strokeWidth={1.5}
+                  />
                 </span>
               </a>
+
               <a
                 href="https://hazimdev.com?utm_source=suite-marketplace&utm_medium=hero-cta"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 border border-canvas/30 h-14 px-8 hover:border-flame-red hover:text-flame-red transition-colors"
+                className="group lg:col-span-2 bg-ink hover:bg-canvas hover:text-ink transition-colors p-6 lg:p-8 flex flex-col justify-between gap-6"
               >
-                <Code2 className="w-4 h-4" strokeWidth={1.5} />
-                <span className="text-[15px] font-heading">hazimdev.com</span>
-                <ExternalLink className="w-3.5 h-3.5 opacity-60" strokeWidth={1.5} />
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-flame-red">
+                    Portfolio
+                  </p>
+                  <p className="font-display font-extrabold text-2xl lg:text-3xl mt-2 leading-tight">
+                    See more work at hazimdev.com
+                  </p>
+                </div>
+                <div className="flex items-center justify-between text-[13px] font-mono uppercase tracking-[0.14em] text-canvas/60 group-hover:text-muted">
+                  <span className="inline-flex items-center gap-2">
+                    <Code2 className="w-3.5 h-3.5" strokeWidth={1.5} />
+                    Visit site
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.5} />
+                </div>
               </a>
             </div>
-            <p className="mt-4 text-[12px] font-mono uppercase tracking-[0.16em] text-canvas/50">
+
+            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
+              <p className="text-[11px] font-mono uppercase tracking-[0.16em] text-canvas/50">
+                <span className="text-flame-red">●</span> 2 build slots open this month
+              </p>
+              <p className="text-[11px] font-mono uppercase tracking-[0.16em] text-canvas/50">
+                Free 15-min discovery call
+              </p>
+              <p className="text-[11px] font-mono uppercase tracking-[0.16em] text-canvas/50">
+                From RM 800
+              </p>
+            </div>
+
+            <p className="mt-6 text-[11px] font-mono uppercase tracking-[0.16em] text-canvas/40">
               Next.js · Supabase · Tailwind · Vercel · Sonner · Lucide
             </p>
           </div>
