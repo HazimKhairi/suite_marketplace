@@ -162,6 +162,15 @@ export function CheckoutClient() {
   async function createOrder() {
     setCreating(true);
     try {
+      const hasJacket = items.some((i) => i.category === 'jacket');
+      let jacketPasscode: string | undefined;
+      if (hasJacket && typeof window !== 'undefined') {
+        try {
+          jacketPasscode = localStorage.getItem('suite_jacket_passcode_v1') ?? undefined;
+        } catch {
+          // ignore
+        }
+      }
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -177,6 +186,7 @@ export function CheckoutClient() {
             player_number: i.player_number,
             player_type: i.player_type,
           })),
+          jacket_passcode: jacketPasscode,
         }),
       });
       const json = await res.json();
@@ -206,6 +216,11 @@ export function CheckoutClient() {
       toast.success('Receipt received. Pending admin review.');
       clear();
       clearPendingOrder();
+      try {
+        localStorage.removeItem('suite_jacket_passcode_v1');
+      } catch {
+        // ignore
+      }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Upload failed');
     } finally {

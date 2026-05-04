@@ -18,6 +18,8 @@ export const checkoutSchema = z.object({
     .regex(/^(\+?60|0)?[0-9-\s]{8,}$/i, 'Use Malaysian phone'),
   customer_email: z.string().email('Valid email required'),
   items: z.array(itemSchema).min(1),
+  // Sent only when the cart contains a jacket — server checks against env JACKET_PASSCODE.
+  jacket_passcode: z.string().optional(),
 });
 
 export type CheckoutPayload = z.infer<typeof checkoutSchema>;

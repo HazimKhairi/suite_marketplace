@@ -8,9 +8,13 @@ import { formatMYR } from '@/lib/utils';
 import { effectiveUnitPrice, sizeSurcharge, surchargeLabel, SIZES } from '@/lib/pricing';
 import { Input, Label } from '@/components/ui/input';
 import { SizeChart } from '@/components/product/size-chart';
+import { SUITE_SPORTS, sportLabel } from '@/lib/sports';
 import type { Product, CartItem } from '@/lib/types';
 import type { PlayerType } from '@/lib/teams';
 import type { TakenPlayer } from '@/lib/players';
+
+const JACKET_PASSCODE = process.env.NEXT_PUBLIC_JACKET_PASSCODE ?? 'JACKETSUITE2026';
+const JACKET_PASSCODE_KEY = 'suite_jacket_passcode_v1';
 
 type Props = {
   product: Product;
@@ -49,7 +53,11 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
   const [number, setNumber] = useState('');
   const [playerType, setPlayerType] = useState<PlayerType>('player');
   const [adding, setAdding] = useState(false);
-  const [confirmedSquad, setConfirmedSquad] = useState(false);
+  const [sport, setSport] = useState<string>('');
+  const [passcode, setPasscode] = useState('');
+
+  const passcodeOk = passcode.trim().toUpperCase() === JACKET_PASSCODE.toUpperCase();
+  const passcodeAttempted = passcode.trim().length > 0;
 
   const max = Math.max(1, product.stock);
   const outOfStock = product.stock === 0;
@@ -71,13 +79,16 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
       errors.push('Player number (1 to 3 digits or leave blank)');
     }
     if (numberConflict) errors.push(`Number ${trimmedNumber} is taken by ${existingClaimant}`);
-  } else if (!confirmedSquad) {
-    errors.push('Confirm you are a Suite Games athlete');
+  } else {
+    if (!sport) errors.push('Pick your sport');
+    if (!passcodeOk) errors.push('Athlete passcode is required');
   }
 
   function build(): Omit<CartItem, 'lineId'> {
     const cleanedName = name.trim().toUpperCase();
     const cleanedNumber = number.trim();
+    // Jacket lines reuse player_name to carry the athlete's sport so admin sees it
+    // on the order detail without a schema change.
     return {
       productId: product.id,
       slug: product.slug,
@@ -88,9 +99,8 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
       size,
       quantity: qty,
       unit_price: Number(product.price),
-      player_name: isJacket ? null : cleanedName || null,
+      player_name: isJacket ? (sportLabel(sport) ?? null) : cleanedName || null,
       player_number: isJacket ? null : cleanedNumber || null,
-      // Jacket buyers self-attest as squad players, so the order line records that intent.
       player_type: isJacket ? 'player' : playerType,
     };
   }
@@ -104,9 +114,18 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
     setAdding(true);
     add(build());
 
+    // Persist the passcode so checkout can replay it to the API for server validation.
+    if (isJacket && typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(JACKET_PASSCODE_KEY, passcode.trim());
+      } catch {
+        // ignore
+      }
+    }
+
     let label: string;
     if (isJacket) {
-      label = product.name;
+      label = `${product.name} · ${sportLabel(sport) ?? sport}`;
     } else {
       const tag = [trimmedName, trimmedNumber ? `#${trimmedNumber}` : '']
         .filter(Boolean)
@@ -120,39 +139,86 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
   return (
     <div className="space-y-7">
       {isJacket && (
-        <label
-          className={`block border-2 cursor-pointer transition-colors p-5 ${
-            confirmedSquad
+        <div
+          className={`border-2 transition-colors p-5 ${
+            sport && passcodeOk
               ? 'border-leaf bg-leaf/5'
-              : 'border-flame-red bg-flame-red/5 hover:border-ink'
+              : 'border-flame-red bg-flame-red/5'
           }`}
         >
-          <div className="flex items-start gap-4">
-            <input
-              type="checkbox"
-              checked={confirmedSquad}
-              onChange={(e) => setConfirmedSquad(e.target.checked)}
-              className="mt-1 w-4 h-4 accent-flame-red shrink-0"
-            />
-            <div className="flex-1">
-              <p
-                className={`font-mono text-[10px] uppercase tracking-[0.18em] ${
-                  confirmedSquad ? 'text-leaf' : 'text-flame-red'
-                }`}
+          <p
+            className={`font-mono text-[10px] uppercase tracking-[0.18em] ${
+              sport && passcodeOk ? 'text-leaf' : 'text-flame-red'
+            }`}
+          >
+            Suite Games athletes only
+          </p>
+          <p className="mt-2 font-display font-extrabold text-xl leading-tight">
+            Only available for SUITE&rsquo;s athletes.
+          </p>
+          <p className="mt-2 text-[13px] body-lede text-muted">
+            Pick the sport you&rsquo;re competing in, then enter the athlete passcode shared by
+            your team manager. Non-athletes, please grab a jersey instead.
+          </p>
+
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label>Your sport</Label>
+              <select
+                value={sport}
+                onChange={(e) => setSport(e.target.value)}
+                className="w-full h-12 px-3 border border-line bg-canvas text-[14px] font-heading focus:outline-none focus:border-ink"
               >
-                Suite Games athletes only
-              </p>
-              <p className="mt-2 font-display font-extrabold text-xl leading-tight">
-                Only available for SUITE&rsquo;s athletes.
-              </p>
-              <p className="mt-2 text-[13px] body-lede text-muted">
-                Limited drop. Tick to confirm you&rsquo;re an athlete competing at Suite Games
-                11.12.13 June 2026 before adding to cart. Non-athletes, please grab a jersey
-                instead.
-              </p>
+                <option value="">Select sport</option>
+                <optgroup label="Berpasukan">
+                  {SUITE_SPORTS.filter((s) => s.kind === 'team' || s.kind === 'team_mixed').map(
+                    (s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.label}
+                        {s.kind === 'team_mixed' ? ' (Campuran)' : ''}
+                      </option>
+                    ),
+                  )}
+                </optgroup>
+                <optgroup label="Individu">
+                  {SUITE_SPORTS.filter((s) => s.kind === 'individual').map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.label}
+                    </option>
+                  ))}
+                </optgroup>
+              </select>
+            </div>
+            <div>
+              <Label>Athlete passcode</Label>
+              <Input
+                type="password"
+                value={passcode}
+                onChange={(e) => setPasscode(e.target.value)}
+                placeholder="Ask your team manager"
+                autoComplete="off"
+                spellCheck={false}
+                className={`uppercase font-mono tracking-[0.18em] ${
+                  passcodeAttempted && !passcodeOk
+                    ? 'border-flame-red focus:border-flame-red'
+                    : passcodeOk
+                      ? 'border-leaf focus:border-leaf'
+                      : ''
+                }`}
+              />
+              {passcodeAttempted && !passcodeOk && (
+                <p className="mt-1 text-[11px] font-mono uppercase tracking-[0.14em] text-flame-red">
+                  Wrong code — check with your team manager
+                </p>
+              )}
+              {passcodeOk && (
+                <p className="mt-1 text-[11px] font-mono uppercase tracking-[0.14em] text-leaf">
+                  ✓ Passcode verified
+                </p>
+              )}
             </div>
           </div>
-        </label>
+        </div>
       )}
 
       {!isJacket && (
