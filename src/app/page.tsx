@@ -23,8 +23,40 @@ async function getProducts(): Promise<Product[]> {
   }
 }
 
+type SocialProof = { whiteJersey: number; blackJersey: number; jacket: number; total: number };
+
+async function getSocialProof(): Promise<SocialProof> {
+  const empty: SocialProof = { whiteJersey: 0, blackJersey: 0, jacket: 0, total: 0 };
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return empty;
+  try {
+    const supabase = createAdminClient();
+    // Count units in confirmed orders (paid → completed). Verifying / pending / rejected don't count.
+    const { data: rows } = await supabase
+      .from('order_items')
+      .select('quantity, category, products!inner(color), orders!inner(status)')
+      .in('orders.status', ['paid', 'shipped', 'completed']);
+    const c: SocialProof = { ...empty };
+    type Row = {
+      quantity: number;
+      category: string;
+      products: { color: string } | { color: string }[] | null;
+    };
+    for (const r of (rows ?? []) as unknown as Row[]) {
+      const qty = Number(r.quantity) || 0;
+      const color = Array.isArray(r.products) ? r.products[0]?.color : r.products?.color;
+      if (r.category === 'jacket') c.jacket += qty;
+      else if (color === 'white') c.whiteJersey += qty;
+      else if (color === 'black') c.blackJersey += qty;
+    }
+    c.total = c.whiteJersey + c.blackJersey + c.jacket;
+    return c;
+  } catch {
+    return empty;
+  }
+}
+
 export default async function Home() {
-  const products = await getProducts();
+  const [products, proof] = await Promise.all([getProducts(), getSocialProof()]);
 
   return (
     <div>
@@ -136,6 +168,60 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {proof.total > 0 && (
+        <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-24 lg:pt-32">
+          <div className="grid grid-cols-12 gap-6 mb-10 items-end">
+            <div className="col-span-12 md:col-span-7">
+              <p className="eyebrow text-flame-red">
+                <span className="inline-flex items-center gap-2">
+                  <span className="relative inline-flex w-2 h-2">
+                    <span className="absolute inline-flex w-full h-full rounded-full bg-flame-red opacity-75 animate-ping" />
+                    <span className="relative inline-flex w-2 h-2 rounded-full bg-flame-red" />
+                  </span>
+                  Live drop
+                </span>
+              </p>
+              <h2 className="h-section text-[40px] md:text-[72px] mt-4 leading-[0.95]">
+                <span className="text-flame-red">{proof.total}</span> already locked in.
+                <br />
+                Don&rsquo;t be the last one in regular clothes.
+              </h2>
+            </div>
+            <div className="col-span-12 md:col-span-5 body-lede text-muted text-[15px]">
+              Live count of jerseys and jackets that are paid and on the print queue. Stock moves
+              fast — pick yours before sizes start dropping.
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-line border border-line">
+            <ProofCard
+              n="01"
+              tint="text-flame-red"
+              count={proof.whiteJersey}
+              label="White jerseys gone"
+              copy="Lengan pendek + panjang. Cuma yang dah confirm bayar."
+              swatch="bg-canvas border border-ink"
+            />
+            <ProofCard
+              n="02"
+              tint="text-ink"
+              count={proof.blackJersey}
+              label="Black jerseys gone"
+              copy="Lengan pendek + panjang. Squad colour paling laris."
+              swatch="bg-ink"
+            />
+            <ProofCard
+              n="03"
+              tint="text-flame-purple"
+              count={proof.jacket}
+              label="Track jackets gone"
+              copy="Universal fit. Kalau slow, harga balik RM 150."
+              swatch="bg-flame-purple"
+            />
+          </div>
+        </section>
+      )}
 
       <section id="catalog" className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-24 lg:pt-32">
         <div className="grid grid-cols-12 gap-6 mb-12 items-end">
@@ -430,6 +516,36 @@ function Pillar({ n, k, v }: { n: string; k: string; v: string }) {
       <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-flame-red">{n}</p>
       <p className="font-display font-extrabold text-2xl mt-4">{k}</p>
       <p className="mt-3 text-[13px] text-canvas/60 body-lede">{v}</p>
+    </div>
+  );
+}
+
+function ProofCard({
+  n,
+  tint,
+  count,
+  label,
+  copy,
+  swatch,
+}: {
+  n: string;
+  tint: string;
+  count: number;
+  label: string;
+  copy: string;
+  swatch: string;
+}) {
+  return (
+    <div className="bg-canvas p-6 lg:p-8">
+      <div className="flex items-center justify-between">
+        <p className={`font-mono text-[10px] uppercase tracking-[0.18em] ${tint}`}>{n} / Live</p>
+        <span className={`w-3 h-3 rounded-full ${swatch}`} />
+      </div>
+      <p className="mt-6 font-display font-extrabold text-[64px] lg:text-[96px] leading-none tabular-nums">
+        {count}
+      </p>
+      <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.16em]">{label}</p>
+      <p className="mt-2 text-[13px] text-muted body-lede">{copy}</p>
     </div>
   );
 }
