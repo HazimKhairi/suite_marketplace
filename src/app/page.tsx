@@ -141,43 +141,105 @@ export default async function Home() {
             drop.
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-px bg-line border border-line">
-            {products.map((p) => (
-              <Link
-                key={p.id}
-                href={`/jerseys/${p.slug}`}
-                className="group bg-canvas p-3 sm:p-4 flex flex-col"
-              >
-                <div className="aspect-square relative overflow-hidden bg-paper">
-                  <Image
-                    src={p.image_url}
-                    alt={p.name}
-                    fill
-                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                  />
-                  {p.stock < 10 && p.stock > 0 && (
-                    <span className="absolute top-2 left-2 bg-flame-red text-white px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.14em]">
-                      Low
-                    </span>
-                  )}
-                  {p.stock === 0 && (
-                    <span className="absolute top-2 left-2 bg-ink text-canvas px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.14em]">
-                      Sold out
-                    </span>
-                  )}
-                </div>
-                <div className="mt-3 flex items-baseline justify-between gap-2">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted truncate">
-                    {p.color} / {p.category === 'jacket' ? 'Jacket' : p.sleeve_type === 'short' ? 'Short' : 'Long'}
-                  </p>
-                  <p className="font-mono text-[12px] whitespace-nowrap group-hover:text-flame-red transition-colors">
-                    {formatMYR(p.price)}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          (() => {
+            const jerseys = products.filter((p) => p.category === 'jersey');
+            const jackets = products.filter((p) => p.category === 'jacket');
+            return (
+              <>
+                {jerseys.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-line border border-line">
+                    {jerseys.map((p) => (
+                      <Link
+                        key={p.id}
+                        href={`/jerseys/${p.slug}`}
+                        className="group bg-canvas p-3 sm:p-4 flex flex-col"
+                      >
+                        <div className="aspect-square relative overflow-hidden bg-paper">
+                          <Image
+                            src={p.image_url}
+                            alt={p.name}
+                            fill
+                            className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                            sizes="(max-width: 640px) 50vw, 25vw"
+                          />
+                          {p.stock < 10 && p.stock > 0 && (
+                            <span className="absolute top-2 left-2 bg-flame-red text-white px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.14em]">
+                              Low
+                            </span>
+                          )}
+                          {p.stock === 0 && (
+                            <span className="absolute top-2 left-2 bg-ink text-canvas px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.14em]">
+                              Sold out
+                            </span>
+                          )}
+                        </div>
+                        <div className="mt-3 flex items-baseline justify-between gap-2">
+                          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted truncate">
+                            {p.color} / {p.sleeve_type === 'short' ? 'Short' : 'Long'}
+                          </p>
+                          <p className="font-mono text-[12px] whitespace-nowrap group-hover:text-flame-red transition-colors">
+                            {formatMYR(p.price)}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+
+                {jackets.map((p) => (
+                  <Link
+                    key={p.id}
+                    href={`/jerseys/${p.slug}`}
+                    className="group mt-px grid grid-cols-12 gap-px bg-line border border-line border-t-0 hover:border-ink transition-colors"
+                  >
+                    <div className="col-span-12 sm:col-span-4 lg:col-span-3 bg-canvas p-3 sm:p-4">
+                      <div className="aspect-square relative overflow-hidden bg-paper">
+                        <Image
+                          src={p.image_url}
+                          alt={p.name}
+                          fill
+                          className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                          sizes="(max-width: 640px) 100vw, 25vw"
+                        />
+                        {p.stock < 10 && p.stock > 0 && (
+                          <span className="absolute top-2 left-2 bg-flame-red text-white px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.14em]">
+                            Low
+                          </span>
+                        )}
+                        {p.stock === 0 && (
+                          <span className="absolute top-2 left-2 bg-ink text-canvas px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-[0.14em]">
+                            Sold out
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="col-span-12 sm:col-span-8 lg:col-span-9 bg-canvas p-6 sm:p-8 lg:p-12 flex flex-col justify-between gap-6">
+                      <div>
+                        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-flame-purple">
+                          Drop / 02 — Track jacket
+                        </p>
+                        <p className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl mt-3 leading-tight">
+                          {p.name}
+                        </p>
+                        <p className="mt-4 max-w-xl body-lede text-[14px] text-muted">
+                          Suitable for all athletes. Full zip, warm-up ready, no custom name and
+                          number.
+                        </p>
+                      </div>
+                      <div className="flex items-end justify-between gap-4 border-t border-line pt-4">
+                        <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                          {p.color} / Jacket
+                        </span>
+                        <span className="font-display font-extrabold text-3xl sm:text-4xl text-flame-red group-hover:text-ink transition-colors">
+                          {formatMYR(p.price)}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </>
+            );
+          })()
         )}
       </section>
 
