@@ -82,19 +82,6 @@ export default async function Home() {
                     Hot drop
                   </span>
                 </div>
-                <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
-                  <span className="bg-ink text-canvas px-3 py-2 text-[10px] font-mono uppercase tracking-[0.16em]">
-                    Limited launch
-                  </span>
-                  <div className="bg-canvas/95 backdrop-blur px-3 py-2 text-right">
-                    <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted line-through">
-                      RM 150
-                    </p>
-                    <p className="font-display font-extrabold text-2xl text-flame-red leading-none mt-0.5">
-                      RM 80
-                    </p>
-                  </div>
-                </div>
               </div>
               <div className="mt-5 border-t border-line pt-4">
                 <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
@@ -103,6 +90,19 @@ export default async function Home() {
                 <p className="font-display font-extrabold text-2xl mt-2 leading-tight">
                   Suitable for all athletes.
                 </p>
+                <div className="mt-5 flex items-center justify-between gap-4 border-t border-line pt-4">
+                  <span className="bg-ink text-canvas px-3 py-2 text-[10px] font-mono uppercase tracking-[0.16em]">
+                    Limited launch
+                  </span>
+                  <div className="text-right">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted line-through">
+                      RM 150
+                    </p>
+                    <p className="font-display font-extrabold text-3xl text-flame-red leading-none mt-1">
+                      RM 80
+                    </p>
+                  </div>
+                </div>
                 <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-flame-purple">
                   Launch promo — save RM 70 while stock lasts.
                 </p>
