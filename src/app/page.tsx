@@ -58,7 +58,7 @@ export default async function Home() {
                   Browse the drop
                 </Link>
               </div>
-              <div className="rise rise-5 mt-14 grid grid-cols-2 sm:grid-cols-4 gap-y-8 max-w-2xl">
+              <div className="rise rise-5 mt-14 grid grid-cols-2 sm:grid-cols-4 gap-x-8 lg:gap-x-12 gap-y-8 max-w-2xl">
                 <Stat n="01" k="Short sleeve" v="RM 28" tint="text-flame-red" />
                 <Stat n="02" k="Long sleeve" v="RM 33" tint="text-flame-purple" />
                 <Stat n="03" k="Custom" v="Name and number" tint="text-gold" />
