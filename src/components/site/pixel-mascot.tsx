@@ -50,14 +50,14 @@ const PALETTES: Record<Mood, Record<string, string>> = {
 
 const DIALOGUE: { text: string; mood: Mood }[] = [
   { text: 'Hello, saya Hazim!', mood: 'neutral' },
-  { text: 'Hi sekali lagi 👋', mood: 'neutral' },
-  { text: 'Hmm. Lagi?', mood: 'annoyed' },
-  { text: 'Auch! Stop la', mood: 'annoyed' },
-  { text: 'EH dah la weh!', mood: 'angry' },
-  { text: 'STOP. TEKAN. LA.', mood: 'angry' },
-  { text: 'KAU NI APA HAL?!', mood: 'furious' },
-  { text: '😡😡 SUDAHHH', mood: 'furious' },
-  { text: '...okay saya merajuk dah', mood: 'sulk' },
+  { text: 'Auch! Stop it', mood: 'neutral' },
+  { text: 'Eh seriously stop', mood: 'annoyed' },
+  { text: 'Beli jacket tu lahh', mood: 'annoyed' },
+  { text: 'RM 80 je lahh', mood: 'angry' },
+  { text: 'Bukan main pakat tekan', mood: 'angry' },
+  { text: 'Saya dah penat', mood: 'furious' },
+  { text: 'OK saya merajuk', mood: 'furious' },
+  { text: 'Click jacket bukan saya', mood: 'sulk' },
 ];
 
 const COLS = ROWS[0].length;
