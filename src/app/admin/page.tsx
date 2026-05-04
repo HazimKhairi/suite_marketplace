@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Download } from 'lucide-react';
 import { requireAdmin } from '@/lib/admin';
 import { createAdminClient } from '@/lib/supabase/server';
 import { Badge } from '@/components/ui/badge';
@@ -53,11 +53,18 @@ export default async function AdminOrdersPage({
 
   return (
     <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-10 pb-24">
-      <div className="flex items-end justify-between mb-10">
+      <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
         <div>
           <p className="eyebrow">Orders</p>
           <h1 className="h-display text-[48px] md:text-[64px] mt-3">Inbox.</h1>
         </div>
+        <a
+          href={`/api/admin/orders/export${status && status !== 'all' ? `?status=${status}` : ''}`}
+          className="inline-flex items-center gap-2 h-11 px-5 bg-ink text-canvas hover:bg-flame-red transition-colors text-[13px] font-heading font-semibold"
+        >
+          <Download className="w-4 h-4" strokeWidth={1.5} />
+          Export CSV{status && status !== 'all' ? ` · ${status}` : ''}
+        </a>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-8">
