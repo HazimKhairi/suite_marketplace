@@ -169,39 +169,21 @@ export default async function Home() {
         </div>
       </section>
 
-      {proof.total > 0 && (
-        <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 lg:pt-16">
-          <div className="flex flex-wrap items-end justify-between gap-4 mb-4">
-            <p className="eyebrow text-flame-red">
-              <span className="inline-flex items-center gap-2">
-                <span className="relative inline-flex w-2 h-2">
-                  <span className="absolute inline-flex w-full h-full rounded-full bg-flame-red opacity-75 animate-ping" />
-                  <span className="relative inline-flex w-2 h-2 rounded-full bg-flame-red" />
-                </span>
-                Live drop · {proof.total} already locked in
-              </span>
-            </p>
-            <p className="text-[12px] font-mono uppercase tracking-[0.16em] text-muted">
-              Don&rsquo;t be the last one in regular clothes.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-px bg-line border border-line">
-            <ProofCard
-              count={proof.whiteJersey}
-              label="White jerseys"
-              swatch="bg-canvas border border-ink"
-            />
-            <ProofCard count={proof.blackJersey} label="Black jerseys" swatch="bg-ink" />
-            <ProofCard count={proof.jacket} label="Track jackets" swatch="bg-flame-purple" />
-          </div>
-        </section>
-      )}
-
       <section id="catalog" className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-24 lg:pt-32">
-        <div className="grid grid-cols-12 gap-6 mb-12 items-end">
+        <div className="grid grid-cols-12 gap-6 mb-10 items-end">
           <div className="col-span-12 md:col-span-7">
-            <p className="eyebrow">01 / The drop</p>
+            <div className="flex items-center gap-3 flex-wrap">
+              <p className="eyebrow">01 / The drop</p>
+              {proof.total > 0 && (
+                <span className="inline-flex items-center gap-2 px-2.5 py-1 border border-flame-red text-flame-red font-mono text-[10px] uppercase tracking-[0.16em]">
+                  <span className="relative inline-flex w-1.5 h-1.5">
+                    <span className="absolute inline-flex w-full h-full rounded-full bg-flame-red opacity-75 animate-ping" />
+                    <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-flame-red" />
+                  </span>
+                  Live · {proof.total} locked in
+                </span>
+              )}
+            </div>
             <h2 className="h-section text-[40px] md:text-[80px] mt-4">
               Full kit. <span className="text-flame-red">One</span> squad.
             </h2>
@@ -211,6 +193,28 @@ export default async function Home() {
             track jacket suitable for all athletes. Hit the court at Suite Games 11.12.13 June.
           </div>
         </div>
+
+        {proof.total > 0 && (
+          <div className="mb-px border border-line border-b-0 bg-paper">
+            <div className="grid grid-cols-3 divide-x divide-line">
+              <ProofCard
+                count={proof.whiteJersey}
+                label="White jerseys"
+                swatch="bg-canvas border border-ink"
+              />
+              <ProofCard count={proof.blackJersey} label="Black jerseys" swatch="bg-ink" />
+              <ProofCard count={proof.jacket} label="Track jackets" swatch="bg-flame-purple" />
+            </div>
+            <div className="border-t border-line px-4 py-2.5 flex items-center justify-between gap-4 flex-wrap">
+              <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted">
+                Already paid · on the print queue
+              </p>
+              <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-flame-red">
+                Don&rsquo;t be the last one in regular clothes.
+              </p>
+            </div>
+          </div>
+        )}
 
         {products.length === 0 ? (
           <div className="border border-dashed border-line p-12 text-center text-muted">
@@ -505,7 +509,7 @@ function ProofCard({
   swatch: string;
 }) {
   return (
-    <div className="bg-canvas px-3 py-4 sm:px-5 sm:py-5 flex items-center gap-3 sm:gap-4">
+    <div className="px-3 py-4 sm:px-5 sm:py-5 flex items-center gap-3 sm:gap-4 hover:bg-canvas transition-colors">
       <span className={`shrink-0 w-2.5 h-2.5 rounded-full ${swatch}`} />
       <div className="min-w-0 flex items-baseline gap-2 sm:gap-3 flex-wrap">
         <p className="font-display font-extrabold text-2xl sm:text-3xl leading-none tabular-nums">
