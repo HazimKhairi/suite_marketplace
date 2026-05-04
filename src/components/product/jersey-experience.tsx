@@ -50,16 +50,18 @@ export function JerseyExperience({ initialProductId, variants, takenPlayers }: P
   return (
     <div className="grid grid-cols-12 gap-6 lg:gap-12">
       <div className="col-span-12 lg:col-span-7">
-        <div className="aspect-[4/5] relative overflow-hidden bg-paper border border-line">
-          <Image
-            key={selected.id}
-            src={selected.image_url}
-            alt={selected.name}
-            fill
-            priority
-            className="object-cover"
-            sizes="(max-width: 1024px) 100vw, 800px"
-          />
+        <div className="lg:sticky lg:top-28">
+          <div className="aspect-[4/5] relative overflow-hidden bg-paper border border-line">
+            <Image
+              key={selected.id}
+              src={selected.image_url}
+              alt={selected.name}
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 800px"
+            />
+          </div>
         </div>
       </div>
 
@@ -86,18 +88,37 @@ export function JerseyExperience({ initialProductId, variants, takenPlayers }: P
                 className="grid gap-px bg-line border border-line"
                 style={{ gridTemplateColumns: `repeat(${colors.length}, minmax(0, 1fr))` }}
               >
-                {colors.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => pickColor(c)}
-                    className={`h-12 text-[13px] font-heading uppercase tracking-[0.12em] transition-colors ${
-                      selected.color === c ? 'bg-ink text-canvas' : 'bg-canvas hover:bg-paper'
-                    }`}
-                  >
-                    {c}
-                  </button>
-                ))}
+                {colors.map((c) => {
+                  const preview = findVariant(c, selected.sleeve_type) ?? variants.find((v) => v.color === c);
+                  const active = selected.color === c;
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => pickColor(c)}
+                      className={`p-3 flex items-center gap-3 text-left transition-colors ${
+                        active ? 'bg-ink text-canvas' : 'bg-canvas hover:bg-paper'
+                      }`}
+                    >
+                      {preview && (
+                        <div
+                          className={`relative w-14 h-14 shrink-0 overflow-hidden border ${
+                            active ? 'border-canvas/30' : 'border-line bg-paper'
+                          }`}
+                        >
+                          <Image
+                            src={preview.image_url}
+                            alt=""
+                            fill
+                            className="object-cover"
+                            sizes="56px"
+                          />
+                        </div>
+                      )}
+                      <span className="font-mono text-[12px] uppercase tracking-[0.16em]">{c}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -115,17 +136,33 @@ export function JerseyExperience({ initialProductId, variants, takenPlayers }: P
                       type="button"
                       onClick={() => pickSleeve(s)}
                       disabled={!variant}
-                      className={`h-16 px-4 text-left transition-colors ${
+                      className={`p-3 flex items-center gap-3 text-left transition-colors ${
                         active ? 'bg-ink text-canvas' : 'bg-canvas hover:bg-paper'
                       } ${!variant ? 'opacity-40 cursor-not-allowed' : ''}`}
                     >
-                      <p className="font-mono text-[10px] uppercase tracking-[0.16em]">
-                        {s === 'short' ? '01' : '02'}{' '}
-                        {variant ? `/ ${formatMYR(variant.price)}` : '/ unavailable'}
-                      </p>
-                      <p className="text-[13px] mt-1 font-heading font-semibold">
-                        {s === 'short' ? 'Short sleeve' : 'Long sleeve'}
-                      </p>
+                      {variant && (
+                        <div
+                          className={`relative w-14 h-14 shrink-0 overflow-hidden border ${
+                            active ? 'border-canvas/30' : 'border-line bg-paper'
+                          }`}
+                        >
+                          <Image
+                            src={variant.image_url}
+                            alt=""
+                            fill
+                            className="object-cover"
+                            sizes="56px"
+                          />
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <p className="font-mono text-[10px] uppercase tracking-[0.16em] truncate">
+                          {variant ? formatMYR(variant.price) : 'unavailable'}
+                        </p>
+                        <p className="text-[13px] mt-0.5 font-heading font-semibold truncate">
+                          {s === 'short' ? 'Short sleeve' : 'Long sleeve'}
+                        </p>
+                      </div>
                     </button>
                   );
                 })}
