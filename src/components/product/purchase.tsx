@@ -62,12 +62,18 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
 
   const errors: string[] = [];
   if (!isJacket) {
-    if (name.trim().length < 2) errors.push('Player name (minimum 2 letters)');
-    if (!/^[0-9]{1,3}$/.test(trimmedNumber)) errors.push('Player number (1 to 3 digits)');
+    // Name and number are optional. The only blocker is a number that collides with
+    // another player's existing claim. Length / digit format is checked only when the
+    // shopper actually types something.
+    if (number !== '' && !/^[0-9]{1,3}$/.test(trimmedNumber)) {
+      errors.push('Player number (1 to 3 digits or leave blank)');
+    }
     if (numberConflict) errors.push(`Number ${trimmedNumber} is taken by ${existingClaimant}`);
   }
 
   function build(): Omit<CartItem, 'lineId'> {
+    const cleanedName = name.trim().toUpperCase();
+    const cleanedNumber = number.trim();
     return {
       productId: product.id,
       slug: product.slug,
@@ -78,8 +84,8 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
       size,
       quantity: qty,
       unit_price: Number(product.price),
-      player_name: isJacket ? null : name.trim().toUpperCase(),
-      player_number: isJacket ? null : number.trim(),
+      player_name: isJacket ? null : cleanedName || null,
+      player_number: isJacket ? null : cleanedNumber || null,
       player_type: isJacket ? null : playerType,
     };
   }
@@ -87,16 +93,22 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
   function handleAdd() {
     if (outOfStock) return;
     if (errors.length > 0) {
-      toast.error(`Please fill: ${errors.join(', ')}`);
+      toast.error(`Please fix: ${errors.join(', ')}`);
       return;
     }
     setAdding(true);
     add(build());
-    toast.success(
-      isJacket
-        ? `Added ${product.name}, size ${size}, qty ${qty}`
-        : `Added ${name.toUpperCase()} #${number}, size ${size}, qty ${qty}`,
-    );
+
+    let label: string;
+    if (isJacket) {
+      label = product.name;
+    } else {
+      const tag = [trimmedName, trimmedNumber ? `#${trimmedNumber}` : '']
+        .filter(Boolean)
+        .join(' ');
+      label = tag || 'Blank jersey';
+    }
+    toast.success(`Added ${label}, size ${size}, qty ${qty}`);
     setTimeout(() => setAdding(false), 250);
   }
 
@@ -106,17 +118,17 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4">
             <div>
-              <Label>Player name (printed on the back)</Label>
+              <Label>Player name (optional, printed on the back)</Label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="AIMAN"
+                placeholder="AIMAN or leave blank"
                 maxLength={14}
                 className="uppercase font-heading"
               />
             </div>
             <div>
-              <Label>Number</Label>
+              <Label>Number (optional)</Label>
               <Input
                 value={number}
                 onChange={(e) =>
@@ -128,6 +140,10 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
               />
             </div>
           </div>
+          <p className="-mt-3 text-[12px] text-muted body-lede">
+            Leave name and number blank if the wearer prefers a clean jersey. Otherwise we print
+            both on the back.
+          </p>
 
           <div>
             <Label>Status</Label>

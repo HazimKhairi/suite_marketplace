@@ -48,7 +48,9 @@ export default async function AdminOrderPage({
         <div className="col-span-12 lg:col-span-7 space-y-10">
           <div>
             <p className="eyebrow">Order</p>
-            <p className="font-mono text-3xl mt-2 tracking-wider">{o.order_number}</p>
+            <p className="font-mono text-2xl sm:text-3xl mt-2 tracking-wider break-all">
+              {o.order_number}
+            </p>
             <div className="mt-3 flex items-center gap-3">
               <Badge variant={STATUS[o.status].tone}>{STATUS[o.status].text}</Badge>
               <span className="text-[12px] text-muted font-mono">{formatDate(o.created_at)}</span>
@@ -175,8 +177,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Field({ k, v }: { k: string; v: React.ReactNode }) {
   return (
     <div className="flex items-baseline justify-between gap-4 text-[13px]">
-      <span className="text-muted shrink-0 min-w-24">{k}</span>
-      <span className="text-right">{v}</span>
+      <span className="text-muted shrink-0 min-w-20">{k}</span>
+      <span className="text-right break-all min-w-0">{v}</span>
     </div>
   );
 }

@@ -79,42 +79,46 @@ export default async function AdminOrdersPage({
         })}
       </div>
 
-      <div className="border border-line">
-        <div className="grid grid-cols-12 gap-3 px-5 py-3 bg-paper border-b border-line font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
-          <div className="col-span-3">Order</div>
-          <div className="col-span-3">Customer</div>
-          <div className="col-span-2">Status</div>
-          <div className="col-span-2">Total</div>
-          <div className="col-span-2 text-right">When</div>
+      <div className="border border-line overflow-x-auto">
+        <div className="min-w-[680px]">
+          <div className="grid grid-cols-12 gap-3 px-5 py-3 bg-paper border-b border-line font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+            <div className="col-span-3">Order</div>
+            <div className="col-span-3">Customer</div>
+            <div className="col-span-2">Status</div>
+            <div className="col-span-2">Total</div>
+            <div className="col-span-2 text-right">When</div>
+          </div>
+          {(!orders || orders.length === 0) && (
+            <div className="p-10 text-center text-muted text-[14px]">No orders here yet.</div>
+          )}
+          {orders?.map((o) => (
+            <Link
+              key={o.id}
+              href={`/admin/orders/${o.id}`}
+              className="grid grid-cols-12 gap-3 px-5 py-4 border-b border-line last:border-b-0 hover:bg-paper transition-colors items-center"
+            >
+              <div className="col-span-3 font-mono text-[12px] min-w-0">
+                <p className="tracking-wider truncate">{o.order_number}</p>
+              </div>
+              <div className="col-span-3 min-w-0">
+                <p className="text-[14px] truncate">{o.customer_name}</p>
+                <p className="text-[12px] text-muted font-mono truncate">{o.customer_phone}</p>
+              </div>
+              <div className="col-span-2">
+                <Badge variant={STATUS[o.status as OrderStatus].tone}>
+                  {STATUS[o.status as OrderStatus].text}
+                </Badge>
+              </div>
+              <div className="col-span-2 font-mono text-[13px] whitespace-nowrap">
+                {formatMYR(Number(o.total_amount))}
+              </div>
+              <div className="col-span-2 text-right text-[12px] text-muted flex items-center justify-end gap-1 min-w-0">
+                <span className="truncate">{formatDate(o.created_at)}</span>
+                <ArrowUpRight className="w-3.5 h-3.5 shrink-0" strokeWidth={1.5} />
+              </div>
+            </Link>
+          ))}
         </div>
-        {(!orders || orders.length === 0) && (
-          <div className="p-10 text-center text-muted text-[14px]">No orders here yet.</div>
-        )}
-        {orders?.map((o) => (
-          <Link
-            key={o.id}
-            href={`/admin/orders/${o.id}`}
-            className="grid grid-cols-12 gap-3 px-5 py-4 border-b border-line last:border-b-0 hover:bg-paper transition-colors items-center"
-          >
-            <div className="col-span-3 font-mono text-[12px]">
-              <p className="tracking-wider">{o.order_number}</p>
-            </div>
-            <div className="col-span-3">
-              <p className="text-[14px]">{o.customer_name}</p>
-              <p className="text-[12px] text-muted font-mono">{o.customer_phone}</p>
-            </div>
-            <div className="col-span-2">
-              <Badge variant={STATUS[o.status as OrderStatus].tone}>
-                {STATUS[o.status as OrderStatus].text}
-              </Badge>
-            </div>
-            <div className="col-span-2 font-mono text-[13px]">{formatMYR(Number(o.total_amount))}</div>
-            <div className="col-span-2 text-right text-[12px] text-muted flex items-center justify-end gap-1">
-              {formatDate(o.created_at)}
-              <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={1.5} />
-            </div>
-          </Link>
-        ))}
       </div>
     </div>
   );

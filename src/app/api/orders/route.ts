@@ -129,15 +129,12 @@ export async function POST(req: Request) {
     }
     const isJersey = p.category === 'jersey';
     if (isJersey) {
-      if (!item.player_name || item.player_name.trim().length < 2) {
+      // Name + number are optional. Format-check the number ONLY when the customer
+      // actually filled it in; player_type stays required so the squad-number
+      // uniqueness rule can still apply.
+      if (item.player_number && !/^[0-9]{1,3}$/.test(item.player_number.trim())) {
         return NextResponse.json(
-          { error: `Player name required for jersey (${p.name})` },
-          { status: 400 },
-        );
-      }
-      if (!item.player_number || !/^[0-9]{1,3}$/.test(item.player_number.trim())) {
-        return NextResponse.json(
-          { error: `Player number 1 to 3 digits required (${p.name})` },
+          { error: `Player number must be 1 to 3 digits (${p.name})` },
           { status: 400 },
         );
       }
@@ -153,6 +150,9 @@ export async function POST(req: Request) {
     const lineTotal = unitWithSurcharge * item.quantity;
     subtotal += lineTotal;
 
+    const cleanedName = isJersey ? (item.player_name?.trim().toUpperCase() ?? '') : '';
+    const cleanedNumber = isJersey ? (item.player_number?.trim() ?? '') : '';
+
     itemsToInsert.push({
       product_id: p.id,
       product_name: p.name,
@@ -161,8 +161,8 @@ export async function POST(req: Request) {
       quantity: item.quantity,
       unit_price: unitWithSurcharge,
       subtotal: lineTotal,
-      player_name: isJersey ? item.player_name!.trim().toUpperCase() : null,
-      player_number: isJersey ? item.player_number!.trim() : null,
+      player_name: isJersey ? cleanedName || null : null,
+      player_number: isJersey ? cleanedNumber || null : null,
       player_type: isJersey ? item.player_type : null,
       sleeve_type: (p.sleeve_type as 'short' | 'long' | null) ?? null,
     });

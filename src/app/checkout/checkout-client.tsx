@@ -321,7 +321,9 @@ export function CheckoutClient() {
             <div className="space-y-8">
               <div className="border border-line p-6 lg:p-8">
                 <p className="eyebrow">Order</p>
-                <p className="font-mono text-2xl mt-2 tracking-wider">{order.order_number}</p>
+                <p className="font-mono text-xl sm:text-2xl mt-2 tracking-wider break-all">
+                  {order.order_number}
+                </p>
                 <div className="mt-6 grid grid-cols-2 gap-y-4 text-[13px]">
                   <div>
                     <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">

@@ -152,8 +152,10 @@ export function TrackClient({
           <div className="col-span-12 lg:col-span-7 space-y-10">
             <div>
               <p className="eyebrow">Order</p>
-              <p className="font-mono text-2xl mt-2 tracking-wider">{order.order_number}</p>
-              <div className="mt-3 flex items-center gap-3 text-[13px] text-muted">
+              <p className="font-mono text-xl sm:text-2xl mt-2 tracking-wider break-all">
+                {order.order_number}
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] text-muted">
                 <span>{formatDate(order.created_at)}</span>
                 <span>/</span>
                 <Badge variant={STATUS_LABEL[order.status].tone}>
