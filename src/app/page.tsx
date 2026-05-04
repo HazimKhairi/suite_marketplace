@@ -170,55 +170,30 @@ export default async function Home() {
       </section>
 
       {proof.total > 0 && (
-        <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-24 lg:pt-32">
-          <div className="grid grid-cols-12 gap-6 mb-10 items-end">
-            <div className="col-span-12 md:col-span-7">
-              <p className="eyebrow text-flame-red">
-                <span className="inline-flex items-center gap-2">
-                  <span className="relative inline-flex w-2 h-2">
-                    <span className="absolute inline-flex w-full h-full rounded-full bg-flame-red opacity-75 animate-ping" />
-                    <span className="relative inline-flex w-2 h-2 rounded-full bg-flame-red" />
-                  </span>
-                  Live drop
+        <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 lg:pt-16">
+          <div className="flex flex-wrap items-end justify-between gap-4 mb-4">
+            <p className="eyebrow text-flame-red">
+              <span className="inline-flex items-center gap-2">
+                <span className="relative inline-flex w-2 h-2">
+                  <span className="absolute inline-flex w-full h-full rounded-full bg-flame-red opacity-75 animate-ping" />
+                  <span className="relative inline-flex w-2 h-2 rounded-full bg-flame-red" />
                 </span>
-              </p>
-              <h2 className="h-section text-[40px] md:text-[72px] mt-4 leading-[0.95]">
-                <span className="text-flame-red">{proof.total}</span> already locked in.
-                <br />
-                Don&rsquo;t be the last one in regular clothes.
-              </h2>
-            </div>
-            <div className="col-span-12 md:col-span-5 body-lede text-muted text-[15px]">
-              Live count of jerseys and jackets that are paid and on the print queue. Stock moves
-              fast — pick yours before sizes start dropping.
-            </div>
+                Live drop · {proof.total} already locked in
+              </span>
+            </p>
+            <p className="text-[12px] font-mono uppercase tracking-[0.16em] text-muted">
+              Don&rsquo;t be the last one in regular clothes.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-line border border-line">
+          <div className="grid grid-cols-3 gap-px bg-line border border-line">
             <ProofCard
-              n="01"
-              tint="text-flame-red"
               count={proof.whiteJersey}
-              label="White jerseys gone"
-              copy="Lengan pendek + panjang. Cuma yang dah confirm bayar."
+              label="White jerseys"
               swatch="bg-canvas border border-ink"
             />
-            <ProofCard
-              n="02"
-              tint="text-ink"
-              count={proof.blackJersey}
-              label="Black jerseys gone"
-              copy="Lengan pendek + panjang. Squad colour paling laris."
-              swatch="bg-ink"
-            />
-            <ProofCard
-              n="03"
-              tint="text-flame-purple"
-              count={proof.jacket}
-              label="Track jackets gone"
-              copy="Universal fit. Kalau slow, harga balik RM 150."
-              swatch="bg-flame-purple"
-            />
+            <ProofCard count={proof.blackJersey} label="Black jerseys" swatch="bg-ink" />
+            <ProofCard count={proof.jacket} label="Track jackets" swatch="bg-flame-purple" />
           </div>
         </section>
       )}
@@ -521,31 +496,25 @@ function Pillar({ n, k, v }: { n: string; k: string; v: string }) {
 }
 
 function ProofCard({
-  n,
-  tint,
   count,
   label,
-  copy,
   swatch,
 }: {
-  n: string;
-  tint: string;
   count: number;
   label: string;
-  copy: string;
   swatch: string;
 }) {
   return (
-    <div className="bg-canvas p-6 lg:p-8">
-      <div className="flex items-center justify-between">
-        <p className={`font-mono text-[10px] uppercase tracking-[0.18em] ${tint}`}>{n} / Live</p>
-        <span className={`w-3 h-3 rounded-full ${swatch}`} />
+    <div className="bg-canvas px-3 py-4 sm:px-5 sm:py-5 flex items-center gap-3 sm:gap-4">
+      <span className={`shrink-0 w-2.5 h-2.5 rounded-full ${swatch}`} />
+      <div className="min-w-0 flex items-baseline gap-2 sm:gap-3 flex-wrap">
+        <p className="font-display font-extrabold text-2xl sm:text-3xl leading-none tabular-nums">
+          {count}
+        </p>
+        <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-muted truncate">
+          {label} sold
+        </p>
       </div>
-      <p className="mt-6 font-display font-extrabold text-[64px] lg:text-[96px] leading-none tabular-nums">
-        {count}
-      </p>
-      <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.16em]">{label}</p>
-      <p className="mt-2 text-[13px] text-muted body-lede">{copy}</p>
     </div>
   );
 }
