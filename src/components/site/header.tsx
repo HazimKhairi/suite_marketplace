@@ -7,10 +7,13 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-canvas/85 backdrop-blur border-b border-line">
       <div className="bg-ink text-canvas">
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 h-9 flex items-center justify-center text-center">
-          <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em]">
-            Get ready for Suite Games{' '}
-            <span className="text-flame-red font-semibold">11.12.13 June 2026</span>
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 h-9 flex items-center justify-center text-center gap-3 sm:gap-5 overflow-hidden">
+          <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] truncate">
+            Order by <span className="text-flame-red font-semibold">20 May</span>
+            <span className="opacity-40 mx-1.5">/</span>
+            Pickup from <span className="text-gold font-semibold">30 May</span>
+            <span className="opacity-40 mx-1.5">/</span>
+            Suite Games <span className="text-flame-purple font-semibold">11.12.13 June</span>
           </p>
         </div>
       </div>

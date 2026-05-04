@@ -197,6 +197,30 @@ export default async function Home() {
           </div>
         </div>
 
+        <div className="mb-10 grid grid-cols-1 sm:grid-cols-3 gap-px bg-line border border-line">
+          <Deadline
+            n="01"
+            label="Last order"
+            value="20 May"
+            tint="text-flame-red"
+            note="Tutup tepat tengah malam."
+          />
+          <Deadline
+            n="02"
+            label="Pickup ready"
+            value="30 May"
+            tint="text-gold"
+            note="Self pickup at UiTM KT."
+          />
+          <Deadline
+            n="03"
+            label="Suite Games"
+            value="11 June"
+            tint="text-flame-purple"
+            note="Sempat pakai konfiden."
+          />
+        </div>
+
         {proof.total > 0 && (
           <div className="mb-px border border-line border-b-0 bg-paper">
             <div className="grid grid-cols-3 divide-x divide-line">
@@ -343,7 +367,7 @@ export default async function Home() {
             { n: '01', k: 'Pick a cut', v: 'Short sleeve at RM 28 or long sleeve at RM 33.', tint: 'text-flame-red' },
             { n: '02', k: 'Personalize', v: 'Name on the back, number 1 to 999, your size.', tint: 'text-flame-purple' },
             { n: '03', k: 'Pay', v: 'DuitNow QR or bank transfer. Receipt verified by AI.', tint: 'text-gold' },
-            { n: '04', k: 'Play', v: 'Track your order online. Self pickup at UiTM KT.', tint: 'text-leaf' },
+            { n: '04', k: 'Play', v: 'Last order 20 May. Pickup from 30 May at UiTM KT — sempat sebelum Suite Games 11 June.', tint: 'text-leaf' },
           ].map((s) => (
             <div
               key={s.n}
@@ -494,6 +518,33 @@ function Pillar({ n, k, v }: { n: string; k: string; v: string }) {
       <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-flame-red">{n}</p>
       <p className="font-display font-extrabold text-2xl mt-4">{k}</p>
       <p className="mt-3 text-[13px] text-canvas/60 body-lede">{v}</p>
+    </div>
+  );
+}
+
+function Deadline({
+  n,
+  label,
+  value,
+  tint,
+  note,
+}: {
+  n: string;
+  label: string;
+  value: string;
+  tint: string;
+  note: string;
+}) {
+  return (
+    <div className="bg-canvas px-5 py-5 sm:px-6 sm:py-6">
+      <div className="flex items-center justify-between">
+        <p className={`font-mono text-[10px] uppercase tracking-[0.18em] ${tint}`}>
+          {n} / {label}
+        </p>
+        <span className={`w-1.5 h-1.5 rounded-full ${tint.replace('text-', 'bg-')}`} />
+      </div>
+      <p className="mt-3 font-display font-extrabold text-3xl sm:text-4xl leading-none">{value}</p>
+      <p className="mt-2 text-[12px] font-mono uppercase tracking-[0.14em] text-muted">{note}</p>
     </div>
   );
 }
