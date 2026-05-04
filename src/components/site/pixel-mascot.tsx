@@ -40,7 +40,7 @@ const DIALOGUE = [
   'Auch! Stop it',
   'Eh seriously stop',
   'Beli jacket tu lahh',
-  'RM 80 je sayang',
+  'RM 80 je lahh',
   'Bukan main pakat tekan',
   'Saya dah penat',
   'OK saya merajuk',
