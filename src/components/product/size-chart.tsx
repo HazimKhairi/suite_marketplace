@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Ruler, ChevronDown, X } from 'lucide-react';
 
 type Row = {
@@ -162,6 +163,11 @@ export function SizeChart({
 
 export function SizeChartButton() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -176,6 +182,41 @@ export function SizeChartButton() {
     };
   }, [open]);
 
+  const modal = open ? (
+    <div
+      className="fixed inset-0 z-[100] bg-ink/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 sm:p-8 overflow-y-auto"
+      onClick={() => setOpen(false)}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Size chart"
+    >
+      <div
+        className="bg-canvas border border-line w-full max-w-5xl max-h-[90vh] overflow-y-auto my-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="border-b border-line px-6 py-4 flex items-center justify-between gap-4 sticky top-0 bg-canvas z-10">
+          <div className="flex items-center gap-3">
+            <Ruler className="w-4 h-4 text-flame-red" strokeWidth={1.5} />
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em]">
+              Size chart — measurements in inches
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="hover:text-flame-red transition-colors"
+            aria-label="Close size chart"
+          >
+            <X className="w-5 h-5" strokeWidth={1.5} />
+          </button>
+        </div>
+        <div className="p-px">
+          <SizeChartPanel />
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <>
       <button
@@ -186,41 +227,7 @@ export function SizeChartButton() {
         <Ruler className="w-3.5 h-3.5" strokeWidth={1.5} />
         Size
       </button>
-
-      {open && (
-        <div
-          className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 sm:p-8 overflow-y-auto"
-          onClick={() => setOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Size chart"
-        >
-          <div
-            className="bg-canvas border border-line w-full max-w-5xl max-h-[90vh] overflow-y-auto my-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="border-b border-line px-6 py-4 flex items-center justify-between gap-4 sticky top-0 bg-canvas z-10">
-              <div className="flex items-center gap-3">
-                <Ruler className="w-4 h-4 text-flame-red" strokeWidth={1.5} />
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em]">
-                  Size chart — measurements in inches
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="hover:text-flame-red transition-colors"
-                aria-label="Close size chart"
-              >
-                <X className="w-5 h-5" strokeWidth={1.5} />
-              </button>
-            </div>
-            <div className="p-px">
-              <SizeChartPanel />
-            </div>
-          </div>
-        </div>
-      )}
+      {mounted && modal ? createPortal(modal, document.body) : null}
     </>
   );
 }
