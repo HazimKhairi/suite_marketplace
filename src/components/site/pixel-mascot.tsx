@@ -50,13 +50,13 @@ const PALETTES: Record<Mood, Record<string, string>> = {
 
 const DIALOGUE: { text: string; mood: Mood }[] = [
   { text: 'Hello, saya Hazim!', mood: 'neutral' },
-  { text: 'Auch! Stop it', mood: 'neutral' },
-  { text: 'Eh seriously stop', mood: 'annoyed' },
+  { text: 'Auch! Stop it', mood: 'annoyed' },
+  { text: 'Eh seriously stop', mood: 'angry' },
   { text: 'Beli jacket tu lahh', mood: 'annoyed' },
-  { text: 'RM 28 je lahh', mood: 'angry' },
-  { text: 'Bukan main pakat tekan', mood: 'angry' },
-  { text: 'Saya dah penat', mood: 'furious' },
-  { text: 'OK saya merajuk', mood: 'furious' },
+  { text: 'RM 28 je lahh', mood: 'annoyed' },
+  { text: 'Bukan main pakat tekan', mood: 'furious' },
+  { text: 'Saya dah penat', mood: 'sulk' },
+  { text: 'OK saya merajuk', mood: 'sulk' },
   { text: 'Click jacket bukan saya', mood: 'sulk' },
 ];
 
