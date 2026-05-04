@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { requireAdmin } from '@/lib/admin';
@@ -7,6 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { formatDate, formatMYR } from '@/lib/utils';
 import type { OcrResult, Order, OrderItem, OrderStatus } from '@/lib/types';
 import { OrderActions } from './order-actions';
+
+type ItemWithProduct = OrderItem & {
+  products: { color: string; image_url: string } | null;
+};
 
 export const dynamic = 'force-dynamic';
 
@@ -30,12 +35,12 @@ export default async function AdminOrderPage({
   const supabase = createAdminClient();
   const { data: order } = await supabase
     .from('orders')
-    .select('*, order_items(*)')
+    .select('*, order_items(*, products(color, image_url))')
     .eq('id', id)
     .maybeSingle();
   if (!order) notFound();
 
-  const o = order as Order & { order_items: OrderItem[] };
+  const o = order as Order & { order_items: ItemWithProduct[] };
   const ocr = o.ocr_result as OcrResult | null;
 
   return (
@@ -67,34 +72,60 @@ export default async function AdminOrderPage({
 
             <Section title="Items">
               <div className="divide-y divide-line">
-                {o.order_items.map((it) => (
-                  <div key={it.id} className="py-3 flex justify-between items-start gap-4">
-                    <div className="flex-1">
-                      <p className="text-[14px]">{it.product_name}</p>
-                      <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-                        <span>Size {it.size} · × {it.quantity}</span>
-                        {it.sleeve_type && (
-                          <>
-                            <span>·</span>
-                            <span>{it.sleeve_type === 'short' ? 'Lengan pendek' : 'Lengan panjang'}</span>
-                          </>
+                {o.order_items.map((it) => {
+                  const color = it.products?.color;
+                  const image = it.products?.image_url;
+                  const swatch = color === 'black' ? 'bg-ink' : color === 'white' ? 'bg-canvas border border-line' : 'bg-paper';
+                  return (
+                    <div key={it.id} className="py-4 flex justify-between items-start gap-4">
+                      <div className="flex gap-4 flex-1 min-w-0">
+                        {image && (
+                          <div className="relative w-20 h-24 bg-paper border border-line shrink-0 overflow-hidden">
+                            <Image
+                              src={image}
+                              alt={it.product_name}
+                              fill
+                              sizes="80px"
+                              className="object-cover"
+                            />
+                          </div>
                         )}
-                        {it.player_type && (
-                          <>
-                            <span>·</span>
-                            <span>{it.player_type === 'player' ? 'Player' : 'Non-player'}</span>
-                          </>
-                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[14px] font-heading font-semibold">{it.product_name}</p>
+                          {color && (
+                            <div className="mt-1.5 inline-flex items-center gap-2">
+                              <span className={`w-3 h-3 rounded-full ${swatch}`} />
+                              <span className="font-mono text-[11px] uppercase tracking-[0.14em]">
+                                {color}
+                              </span>
+                            </div>
+                          )}
+                          <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                            <span>Size {it.size} · × {it.quantity}</span>
+                            {it.sleeve_type && (
+                              <>
+                                <span>·</span>
+                                <span>{it.sleeve_type === 'short' ? 'Lengan pendek' : 'Lengan panjang'}</span>
+                              </>
+                            )}
+                            {it.player_type && (
+                              <>
+                                <span>·</span>
+                                <span>{it.player_type === 'player' ? 'Player' : 'Non-player'}</span>
+                              </>
+                            )}
+                          </div>
+                          {it.player_name && (
+                            <p className="mt-2 inline-block bg-ink text-canvas px-3 py-1 font-mono text-[12px]">
+                              {it.player_name} <span className="opacity-60">·</span> #{it.player_number}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      {it.player_name && (
-                        <p className="mt-2 inline-block bg-ink text-canvas px-3 py-1 font-mono text-[12px]">
-                          {it.player_name} <span className="opacity-60">·</span> #{it.player_number}
-                        </p>
-                      )}
+                      <p className="font-mono text-[13px] whitespace-nowrap">{formatMYR(Number(it.subtotal))}</p>
                     </div>
-                    <p className="font-mono text-[13px] whitespace-nowrap">{formatMYR(Number(it.subtotal))}</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </Section>
 
