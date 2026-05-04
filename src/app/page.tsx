@@ -95,6 +95,39 @@ export default async function Home() {
                   <span>SS / 26</span>
                 </div>
               </div>
+
+              <div className="mt-6 grid grid-cols-5 gap-4 items-stretch rise rise-4">
+                <div className="col-span-2 relative aspect-square bg-[#1a1a1a] border border-line overflow-hidden">
+                  <Image
+                    src="/jerseys/jacket_white.png"
+                    alt="UiTM KT track jacket"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 40vw, 240px"
+                  />
+                  <span className="absolute top-2 left-2 bg-canvas/90 px-2 py-1 eyebrow">
+                    Drop / 02
+                  </span>
+                </div>
+                <div className="col-span-3 border border-line p-4 flex flex-col justify-between">
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-flame-purple">
+                      Also dropping
+                    </p>
+                    <p className="font-display font-extrabold text-xl mt-2 leading-tight">
+                      Track jacket. Same squad.
+                    </p>
+                  </div>
+                  <div className="flex items-baseline justify-between mt-3">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                      White / Zip
+                    </span>
+                    <span className="font-display font-extrabold text-2xl text-flame-red">
+                      RM 80
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -109,6 +142,7 @@ export default async function Home() {
                   { t: 'Sublimation print', c: 'text-ink' },
                   { t: 'RM 28 short', c: 'text-flame-purple' },
                   { t: 'RM 33 long', c: 'text-gold' },
+                  { t: 'RM 80 jacket', c: 'text-flame-red' },
                   { t: 'Made for the court', c: 'text-leaf' },
                 ].map(({ t, c }) => (
                   <span key={t} className={`font-display font-extrabold text-3xl ${c}`}>
