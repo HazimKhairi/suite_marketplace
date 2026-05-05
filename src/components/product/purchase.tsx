@@ -23,8 +23,13 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
   const isJacket = product.category === 'jacket';
 
   const takenMap = useMemo(
-    () => new Map(takenPlayers.map((p) => [p.number, p.name])),
-    [takenPlayers],
+    () =>
+      new Map(
+        takenPlayers
+          .filter((p) => p.product_id === product.id)
+          .map((p) => [p.number, p.name]),
+      ),
+    [takenPlayers, product.id],
   );
 
   // Filter sizes: prefer the product.sizes array if available
