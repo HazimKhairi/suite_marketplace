@@ -110,7 +110,7 @@ export default async function Home() {
                 <div className="relative aspect-[4/5] bg-paper border border-line overflow-hidden">
                   <Image
                     src="/jerseys/jacket_white.png"
-                    alt="Set Athlete Professional — 2 jerseys plus track jacket"
+                    alt="Set Athlete Professional bundle — 2 jerseys plus track jacket"
                     fill
                     priority
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
@@ -122,17 +122,27 @@ export default async function Home() {
                       Hot drop
                     </span>
                   </div>
-                  <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-3">
-                    <span className="bg-ink text-canvas px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em]">
-                      2 jerseys + jacket
-                    </span>
-                    <span className="bg-canvas/95 text-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] inline-flex items-center gap-1.5">
-                      Customize
-                      <ArrowRight
-                        className="w-3 h-3 transition-transform group-hover:translate-x-0.5"
-                        strokeWidth={2}
-                      />
-                    </span>
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 via-ink/60 to-transparent pt-16 pb-5 px-5">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-flame-red">
+                      Set / Bundle
+                    </p>
+                    <p className="font-display font-extrabold text-canvas text-[40px] sm:text-[52px] leading-[0.92] mt-2">
+                      Set Athlete
+                      <br />
+                      <span className="text-flame-red">Professional.</span>
+                    </p>
+                    <div className="mt-4 flex items-center justify-between gap-3">
+                      <span className="bg-ink text-canvas px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] border border-canvas/30">
+                        2 jerseys + jacket
+                      </span>
+                      <span className="bg-canvas text-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] inline-flex items-center gap-1.5 group-hover:bg-flame-red group-hover:text-canvas transition-colors">
+                        Customize
+                        <ArrowRight
+                          className="w-3 h-3 transition-transform group-hover:translate-x-0.5"
+                          strokeWidth={2}
+                        />
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -162,11 +172,11 @@ export default async function Home() {
                     Drop / 01 — Set Athlete Professional
                   </p>
                   <p className="font-display font-extrabold text-2xl mt-2 leading-tight">
-                    Settle padang, court, dan warm-up — satu drop.
+                    Court, field, warm-up. One drop, one click.
                   </p>
                   <p className="mt-2 text-[13px] body-lede text-muted">
-                    Dua jersey lengan pendek custom nama dan nombor, plus track jacket untuk
-                    athletes Suite Games. Tukar warna, size, sport — semua dalam satu page.
+                    Two short sleeve jerseys with your name and number, plus the Suite Games track
+                    jacket. Pick your colours, sizes, sport — all on a single page.
                   </p>
                   <div className="mt-5 flex items-center justify-between gap-4 border-t border-line pt-4">
                     <span className="bg-ink text-canvas px-3 py-2 text-[10px] font-mono uppercase tracking-[0.16em] group-hover:bg-flame-red transition-colors">
@@ -182,7 +192,7 @@ export default async function Home() {
                     </div>
                   </div>
                   <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-flame-purple">
-                    2 × RM 28 jersey + RM 80 jacket. Tiada discount, tiada lompat-lompat page.
+                    2 × RM 28 jerseys + RM 80 jacket. No discount, no jumping between pages.
                   </p>
                   <div className="mt-4 flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.16em] text-muted">
                     <span>SUITE / UITM KT</span>
