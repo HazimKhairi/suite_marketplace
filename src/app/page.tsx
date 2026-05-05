@@ -135,6 +135,28 @@ export default async function Home() {
                     </span>
                   </div>
                 </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-px bg-line border border-line">
+                  {[
+                    { src: '/jerseys/jersey_white.png', label: 'White jersey' },
+                    { src: '/jerseys/jersey_black.png', label: 'Black jersey' },
+                  ].map((j) => (
+                    <div key={j.src} className="bg-canvas p-2.5 flex items-center gap-3">
+                      <div className="relative w-14 h-14 shrink-0 overflow-hidden bg-paper border border-line">
+                        <Image src={j.src} alt={j.label} fill className="object-cover" sizes="56px" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted">
+                          + Included
+                        </p>
+                        <p className="text-[12px] font-heading font-semibold mt-0.5 truncate">
+                          {j.label}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
                 <div className="mt-5 border-t border-line pt-4">
                   <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-flame-red">
                     Drop / 01 — Set Athlete Professional
