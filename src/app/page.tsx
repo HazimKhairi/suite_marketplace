@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, MessageCircle, Code2, ExternalLink } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/server';
-import { TEAM, ORG_CONTACT } from '@/lib/teams';
+import { ORG_CONTACT } from '@/lib/teams';
 import { formatMYR } from '@/lib/utils';
 import type { Product } from '@/lib/types';
 import { PixelMascot } from '@/components/site/pixel-mascot';
@@ -103,50 +103,71 @@ export default async function Home() {
 
             <div className="col-span-12 lg:col-span-5 relative">
               <PixelMascot />
-              <div className="relative aspect-[4/5] bg-paper border border-line overflow-hidden rise rise-3">
-                <Image
-                  src="/jerseys/jacket_white.png"
-                  alt="VB UiTM KT track jacket"
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 600px"
-                />
-                <div className="absolute top-5 left-5 right-5 flex items-start justify-between">
-                  <span className="eyebrow bg-canvas/90 px-2 py-1">Drop / 01</span>
-                  <span className="bg-flame-red text-white px-2 py-1 text-[11px] font-mono uppercase tracking-[0.14em] animate-pulse">
-                    Hot drop
-                  </span>
-                </div>
-              </div>
-              <div className="mt-5 border-t border-line pt-4">
-                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
-                  {TEAM.fullName}
-                </p>
-                <p className="font-display font-extrabold text-2xl mt-2 leading-tight">
-                  Only for SUITE&rsquo;s athletes.
-                </p>
-                <div className="mt-5 flex items-center justify-between gap-4 border-t border-line pt-4">
-                  <span className="bg-ink text-canvas px-3 py-2 text-[10px] font-mono uppercase tracking-[0.16em]">
-                    Limited launch
-                  </span>
-                  <div className="text-right">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted line-through">
-                      RM 150
-                    </p>
-                    <p className="font-display font-extrabold text-3xl text-flame-red leading-none mt-1">
-                      RM 80
-                    </p>
+              <Link
+                href="/combos/set-athlete-professional"
+                className="group block rise rise-3"
+              >
+                <div className="relative aspect-[4/5] bg-paper border border-line overflow-hidden">
+                  <Image
+                    src="/jerseys/jacket_white.png"
+                    alt="Set Athlete Professional — 2 jerseys plus track jacket"
+                    fill
+                    priority
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                    sizes="(max-width: 1024px) 100vw, 600px"
+                  />
+                  <div className="absolute top-5 left-5 right-5 flex items-start justify-between">
+                    <span className="eyebrow bg-canvas/90 px-2 py-1">Bundle / 03 items</span>
+                    <span className="bg-flame-red text-white px-2 py-1 text-[11px] font-mono uppercase tracking-[0.14em] animate-pulse">
+                      Hot drop
+                    </span>
+                  </div>
+                  <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-3">
+                    <span className="bg-ink text-canvas px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em]">
+                      2 jerseys + jacket
+                    </span>
+                    <span className="bg-canvas/95 text-ink px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] inline-flex items-center gap-1.5">
+                      Customize
+                      <ArrowRight
+                        className="w-3 h-3 transition-transform group-hover:translate-x-0.5"
+                        strokeWidth={2}
+                      />
+                    </span>
                   </div>
                 </div>
-                <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-flame-purple">
-                  Launch promo — save RM 70 while stock lasts.
-                </p>
-                <div className="mt-4 flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.16em] text-muted">
-                  <span>SUITE / UITM KT</span>
-                  <span>SS / 26</span>
+                <div className="mt-5 border-t border-line pt-4">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-flame-red">
+                    Drop / 01 — Set Athlete Professional
+                  </p>
+                  <p className="font-display font-extrabold text-2xl mt-2 leading-tight">
+                    Settle padang, court, dan warm-up — satu drop.
+                  </p>
+                  <p className="mt-2 text-[13px] body-lede text-muted">
+                    Dua jersey lengan pendek custom nama dan nombor, plus track jacket untuk
+                    athletes Suite Games. Tukar warna, size, sport — semua dalam satu page.
+                  </p>
+                  <div className="mt-5 flex items-center justify-between gap-4 border-t border-line pt-4">
+                    <span className="bg-ink text-canvas px-3 py-2 text-[10px] font-mono uppercase tracking-[0.16em] group-hover:bg-flame-red transition-colors">
+                      Tap to customize
+                    </span>
+                    <div className="text-right">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                        From
+                      </p>
+                      <p className="font-display font-extrabold text-3xl text-flame-red leading-none mt-1">
+                        RM 136
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-flame-purple">
+                    2 × RM 28 jersey + RM 80 jacket. Tiada discount, tiada lompat-lompat page.
+                  </p>
+                  <div className="mt-4 flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.16em] text-muted">
+                    <span>SUITE / UITM KT</span>
+                    <span>SS / 26</span>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
