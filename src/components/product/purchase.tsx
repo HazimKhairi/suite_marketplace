@@ -48,7 +48,7 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
   }, [product.id, availableSizes, size]);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const [playerType, setPlayerType] = useState<PlayerType>('player');
+  const [playerType, setPlayerType] = useState<PlayerType>('non_player');
   const [adding, setAdding] = useState(false);
   const [sport, setSport] = useState<string>('');
 
