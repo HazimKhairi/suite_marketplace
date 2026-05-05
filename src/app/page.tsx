@@ -6,6 +6,7 @@ import { TEAM, ORG_CONTACT } from '@/lib/teams';
 import { formatMYR } from '@/lib/utils';
 import type { Product } from '@/lib/types';
 import { PixelMascot } from '@/components/site/pixel-mascot';
+import { RecentPurchaseToast } from '@/components/site/recent-purchase-toast';
 
 export const revalidate = 60;
 
@@ -61,6 +62,7 @@ export default async function Home() {
 
   return (
     <div>
+      <RecentPurchaseToast />
       <section className="relative">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 lg:pt-20 pb-24 lg:pb-32">
           <div className="grid grid-cols-12 gap-6 lg:gap-12 items-end">
