@@ -250,8 +250,8 @@ export function ComboExperience({ combo, shortJerseys, jacket, takenPlayers }: P
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">Bundle total</p>
           <p className="mt-2 font-display font-extrabold text-5xl">{formatMYR(total)}</p>
           <p className="mt-2 text-[12px] text-muted body-lede">
-            {slots.length} item{slots.length === 1 ? '' : 's'}. Tiada discount — harga sama macam
-            beli satu-satu, tapi awak tak payah add berkali-kali.
+            {slots.length} item{slots.length === 1 ? '' : 's'}, fully customized, ready to ship from
+            30 May. Match-day kit locked in before the queue catches up.
           </p>
 
           {totalIssues > 0 && (

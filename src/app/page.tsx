@@ -192,7 +192,7 @@ export default async function Home() {
                     </div>
                   </div>
                   <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-flame-purple">
-                    2 × RM 28 jerseys + RM 80 jacket. No discount, no jumping between pages.
+                    Match-day kit, locked in before the rest of the squad notices.
                   </p>
                   <div className="mt-4 flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.16em] text-muted">
                     <span>SUITE / UITM KT</span>

@@ -46,11 +46,12 @@ export default async function JerseysPage() {
             <div>
               <p className="eyebrow">Bundles</p>
               <h2 className="font-display font-extrabold text-3xl md:text-4xl mt-2">
-                Set combo — kurang langkah, sama harga.
+                The full kit, one tap away.
               </h2>
             </div>
             <p className="hidden md:block text-[13px] text-muted body-lede max-w-xs text-right">
-              Pilih combo, custom setiap baju sekali jalan. Tak payah balik-balik catalog.
+              Curated sets for athletes who already know what they need. Customize every piece on a
+              single page.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-line">
