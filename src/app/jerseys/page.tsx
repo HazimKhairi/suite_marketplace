@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/server';
 import { TEAM } from '@/lib/teams';
 import { formatMYR } from '@/lib/utils';
+import { COMBOS } from '@/lib/combos';
 import type { Product } from '@/lib/types';
 
 export const revalidate = 60;
@@ -38,6 +39,46 @@ export default async function JerseysPage() {
           </p>
         </div>
       </div>
+
+      {COMBOS.length > 0 && products.length > 0 && (
+        <section className="mb-12">
+          <div className="flex items-end justify-between mb-5">
+            <div>
+              <p className="eyebrow">Bundles</p>
+              <h2 className="font-display font-extrabold text-3xl md:text-4xl mt-2">
+                Set combo — kurang langkah, sama harga.
+              </h2>
+            </div>
+            <p className="hidden md:block text-[13px] text-muted body-lede max-w-xs text-right">
+              Pilih combo, custom setiap baju sekali jalan. Tak payah balik-balik catalog.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-line border border-line">
+            {COMBOS.map((c) => (
+              <Link
+                key={c.slug}
+                href={`/combos/${c.slug}`}
+                className="group bg-canvas p-6 lg:p-8 flex flex-col justify-between hover:bg-paper transition-colors"
+              >
+                <div>
+                  <div className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.18em] text-flame-red">
+                    <Sparkles className="w-3 h-3" strokeWidth={2} /> {c.slots.length} items
+                  </div>
+                  <p className="mt-3 h-display text-[40px] md:text-[56px] leading-[0.95]">{c.name}</p>
+                  <p className="mt-3 text-[14px] text-ink-soft body-lede max-w-md">{c.tagline}</p>
+                </div>
+                <p className="mt-6 text-[13px] inline-flex items-center gap-1 font-mono uppercase tracking-[0.16em] group-hover:text-flame-red transition-colors">
+                  Customize bundle
+                  <ArrowRight
+                    className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                    strokeWidth={1.5}
+                  />
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {products.length === 0 ? (
         <div className="border border-dashed border-line p-16 text-center">
