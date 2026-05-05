@@ -88,21 +88,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Products not found' }, { status: 400 });
   }
 
-  // Jacket gate: any jacket in the order requires a valid Suite Games athlete passcode.
-  const orderHasJacket = products.some((p) =>
-    data.items.some((i) => i.productId === p.id && p.category === 'jacket'),
-  );
-  if (orderHasJacket) {
-    const expected = (process.env.JACKET_PASSCODE ?? 'JACKETSUITE2026').trim().toUpperCase();
-    const supplied = (data.jacket_passcode ?? '').trim().toUpperCase();
-    if (!supplied || supplied !== expected) {
-      return NextResponse.json(
-        { error: 'Track jacket is locked. Athlete passcode missing or wrong.' },
-        { status: 403 },
-      );
-    }
-  }
-
   const requested: Record<string, number> = {};
   for (const it of data.items) {
     requested[it.productId] = (requested[it.productId] ?? 0) + it.quantity;

@@ -13,9 +13,6 @@ import type { Product, CartItem } from '@/lib/types';
 import type { PlayerType } from '@/lib/teams';
 import type { TakenPlayer } from '@/lib/players';
 
-const JACKET_PASSCODE = process.env.NEXT_PUBLIC_JACKET_PASSCODE ?? 'JACKETSUITE2026';
-const JACKET_PASSCODE_KEY = 'suite_jacket_passcode_v1';
-
 type Props = {
   product: Product;
   takenPlayers?: TakenPlayer[];
@@ -54,10 +51,6 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
   const [playerType, setPlayerType] = useState<PlayerType>('player');
   const [adding, setAdding] = useState(false);
   const [sport, setSport] = useState<string>('');
-  const [passcode, setPasscode] = useState('');
-
-  const passcodeOk = passcode.trim().toUpperCase() === JACKET_PASSCODE.toUpperCase();
-  const passcodeAttempted = passcode.trim().length > 0;
 
   const max = Math.max(1, product.stock);
   const outOfStock = product.stock === 0;
@@ -81,7 +74,6 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
     if (numberConflict) errors.push(`Number ${trimmedNumber} is taken by ${existingClaimant}`);
   } else {
     if (!sport) errors.push('Pick your sport');
-    if (!passcodeOk) errors.push('Athlete passcode is required');
   }
 
   function build(): Omit<CartItem, 'lineId'> {
@@ -114,15 +106,6 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
     setAdding(true);
     add(build());
 
-    // Persist the passcode so checkout can replay it to the API for server validation.
-    if (isJacket && typeof window !== 'undefined') {
-      try {
-        localStorage.setItem(JACKET_PASSCODE_KEY, passcode.trim());
-      } catch {
-        // ignore
-      }
-    }
-
     let label: string;
     if (isJacket) {
       label = `${product.name} · ${sportLabel(sport) ?? sport}`;
@@ -141,14 +124,12 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
       {isJacket && (
         <div
           className={`border-2 transition-colors p-5 ${
-            sport && passcodeOk
-              ? 'border-leaf bg-leaf/5'
-              : 'border-flame-red bg-flame-red/5'
+            sport ? 'border-leaf bg-leaf/5' : 'border-flame-red bg-flame-red/5'
           }`}
         >
           <p
             className={`font-mono text-[10px] uppercase tracking-[0.18em] ${
-              sport && passcodeOk ? 'text-leaf' : 'text-flame-red'
+              sport ? 'text-leaf' : 'text-flame-red'
             }`}
           >
             Suite Games athletes only
@@ -157,66 +138,39 @@ export function ProductPurchase({ product, takenPlayers = [] }: Props) {
             Only available for SUITE&rsquo;s athletes.
           </p>
           <p className="mt-2 text-[13px] body-lede text-muted">
-            Pick the sport you&rsquo;re competing in, then enter the athlete passcode shared by
-            your team manager. Non-athletes, please grab a jersey instead.
+            We dropped the passcode gate. It was friction nobody asked for, and team managers were
+            tired of relaying it. The honour stays with you — pick this only if you are actually
+            competing for UiTM Kuala Terengganu at Suite Games 2026. Non-athletes, please grab a
+            jersey instead. Admin checks the squad list before fulfilment, and any jacket bought
+            outside the roster will be cancelled and refunded.
           </p>
 
-          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label>Your sport</Label>
-              <select
-                value={sport}
-                onChange={(e) => setSport(e.target.value)}
-                className="w-full h-12 px-3 border border-line bg-canvas text-[14px] font-heading focus:outline-none focus:border-ink"
-              >
-                <option value="">Select sport</option>
-                <optgroup label="Berpasukan">
-                  {SUITE_SPORTS.filter((s) => s.kind === 'team' || s.kind === 'team_mixed').map(
-                    (s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.label}
-                        {s.kind === 'team_mixed' ? ' (Campuran)' : ''}
-                      </option>
-                    ),
-                  )}
-                </optgroup>
-                <optgroup label="Individu">
-                  {SUITE_SPORTS.filter((s) => s.kind === 'individual').map((s) => (
+          <div className="mt-5">
+            <Label>Your sport</Label>
+            <select
+              value={sport}
+              onChange={(e) => setSport(e.target.value)}
+              className="w-full h-12 px-3 border border-line bg-canvas text-[14px] font-heading focus:outline-none focus:border-ink"
+            >
+              <option value="">Select sport</option>
+              <optgroup label="Berpasukan">
+                {SUITE_SPORTS.filter((s) => s.kind === 'team' || s.kind === 'team_mixed').map(
+                  (s) => (
                     <option key={s.id} value={s.id}>
                       {s.label}
+                      {s.kind === 'team_mixed' ? ' (Campuran)' : ''}
                     </option>
-                  ))}
-                </optgroup>
-              </select>
-            </div>
-            <div>
-              <Label>Athlete passcode</Label>
-              <Input
-                type="text"
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                placeholder="Ask your team manager or admin"
-                autoComplete="off"
-                spellCheck={false}
-                className={`uppercase font-mono text-[13px] tracking-[0.14em] placeholder:text-[11px] placeholder:tracking-[0.08em] placeholder:normal-case ${
-                  passcodeAttempted && !passcodeOk
-                    ? 'border-flame-red focus:border-flame-red'
-                    : passcodeOk
-                      ? 'border-leaf focus:border-leaf'
-                      : ''
-                }`}
-              />
-              {passcodeAttempted && !passcodeOk && (
-                <p className="mt-1 text-[11px] font-mono uppercase tracking-[0.14em] text-flame-red">
-                  Wrong code — check with your team manager
-                </p>
-              )}
-              {passcodeOk && (
-                <p className="mt-1 text-[11px] font-mono uppercase tracking-[0.14em] text-leaf">
-                  ✓ Passcode verified
-                </p>
-              )}
-            </div>
+                  ),
+                )}
+              </optgroup>
+              <optgroup label="Individu">
+                {SUITE_SPORTS.filter((s) => s.kind === 'individual').map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.label}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
           </div>
         </div>
       )}
