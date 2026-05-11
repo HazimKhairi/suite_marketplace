@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextResponse, after, type NextRequest } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { sendAdminReceiptEmail, sendOrderEmail } from '@/lib/email';
 
@@ -83,39 +83,44 @@ export async function POST(
 
   if (updErr) return NextResponse.json({ error: updErr.message }, { status: 500 });
 
-  if (order.customer_email) {
-    try {
-      await sendOrderEmail(
-        {
-          order_number: order.order_number,
-          customer_name: order.customer_name,
-          customer_email: order.customer_email,
-          delivery_method: order.delivery_method,
-          delivery_address: order.delivery_address,
-          total_amount: order.total_amount,
-          order_items: order.order_items,
-        },
-        newStatus,
-      );
-    } catch (e) {
-      console.error('Email send failed:', e);
+  // Emails run via `after()` so they don't hold the response. Previously we awaited
+  // sendOrderEmail + sendAdminReceiptEmail inline — slow Gmail SMTP made the customer
+  // stuck on "Sending receipt" until the 30s maxDuration timed out.
+  after(async () => {
+    if (order.customer_email) {
+      try {
+        await sendOrderEmail(
+          {
+            order_number: order.order_number,
+            customer_name: order.customer_name,
+            customer_email: order.customer_email,
+            delivery_method: order.delivery_method,
+            delivery_address: order.delivery_address,
+            total_amount: order.total_amount,
+            order_items: order.order_items,
+          },
+          newStatus,
+        );
+      } catch (e) {
+        console.error('Email send failed:', e);
+      }
     }
-  }
 
-  try {
-    await sendAdminReceiptEmail({
-      order_id: order.id,
-      order_number: order.order_number,
-      customer_name: order.customer_name,
-      customer_phone: order.customer_phone,
-      customer_email: order.customer_email,
-      total_amount: order.total_amount,
-      receipt_url: path,
-      attempts_used: attemptsUsed,
-    });
-  } catch (e) {
-    console.error('Admin notification failed:', e);
-  }
+    try {
+      await sendAdminReceiptEmail({
+        order_id: order.id,
+        order_number: order.order_number,
+        customer_name: order.customer_name,
+        customer_phone: order.customer_phone,
+        customer_email: order.customer_email,
+        total_amount: order.total_amount,
+        receipt_url: path,
+        attempts_used: attemptsUsed,
+      });
+    } catch (e) {
+      console.error('Admin notification failed:', e);
+    }
+  });
 
   return NextResponse.json({
     status: newStatus,
