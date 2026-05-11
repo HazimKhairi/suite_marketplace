@@ -206,6 +206,7 @@ export function CheckoutClient() {
       toast.success('Receipt received. Pending admin review.');
       clear();
       clearPendingOrder();
+      router.push(`/track?order=${order.order_number}`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Upload failed');
     } finally {
