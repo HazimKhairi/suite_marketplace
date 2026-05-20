@@ -9,6 +9,8 @@ import { effectiveUnitPrice, sizeSurcharge, SIZES } from '@/lib/pricing';
 import { Input, Label } from '@/components/ui/input';
 import { SUITE_SPORTS, sportLabel } from '@/lib/sports';
 import { formatMYR } from '@/lib/utils';
+import { SALES_CLOSED } from '@/lib/sales';
+import { SalesClosedNotice } from '@/components/site/sales-closed-notice';
 import type { Combo, ComboSlot } from '@/lib/combos';
 import type { Product, CartItem } from '@/lib/types';
 import type { PlayerType } from '@/lib/teams';
@@ -58,7 +60,14 @@ function defaultJacketState(jacket: Product | null): JacketSlotState {
   };
 }
 
-export function ComboExperience({ combo, shortJerseys, jacket, takenPlayers }: Props) {
+export function ComboExperience(props: Props) {
+  if (SALES_CLOSED) {
+    return <SalesClosedNotice />;
+  }
+  return <ComboExperienceForm {...props} />;
+}
+
+function ComboExperienceForm({ combo, shortJerseys, jacket, takenPlayers }: Props) {
   const { add } = useCart();
 
   const [slots, setSlots] = useState<SlotState[]>(() =>

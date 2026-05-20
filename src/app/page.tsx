@@ -7,6 +7,7 @@ import { formatMYR } from '@/lib/utils';
 import type { Product } from '@/lib/types';
 import { PixelMascot } from '@/components/site/pixel-mascot';
 import { RecentPurchaseToast } from '@/components/site/recent-purchase-toast';
+import { SALES_CLOSED, PICKUP_DATE, PICKUP_LOCATION } from '@/lib/sales';
 
 export const revalidate = 60;
 
@@ -79,20 +80,46 @@ export default async function Home() {
                 athletes. Pick your kit, drop your name on the back, hit the court.
               </p>
               <div className="rise rise-4 mt-10 flex flex-wrap items-center gap-4">
-                <Link
-                  href="/jerseys"
-                  className="bg-ink text-canvas h-14 px-8 inline-flex items-center gap-3 hover:bg-flame-red transition-colors text-[15px] font-heading font-semibold"
-                >
-                  Order your jersey
-                  <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
-                </Link>
-                <Link
-                  href="#catalog"
-                  className="border border-line h-14 px-8 inline-flex items-center hover:border-ink text-[15px] font-heading"
-                >
-                  Browse the drop
-                </Link>
+                {SALES_CLOSED ? (
+                  <>
+                    <Link
+                      href="/track"
+                      className="bg-ink text-canvas h-14 px-8 inline-flex items-center gap-3 hover:bg-flame-red transition-colors text-[15px] font-heading font-semibold"
+                    >
+                      Track your order
+                      <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+                    </Link>
+                    <span
+                      aria-disabled="true"
+                      className="border border-line h-14 px-8 inline-flex items-center text-[15px] font-heading text-muted cursor-not-allowed"
+                    >
+                      Pembelian ditutup
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/jerseys"
+                      className="bg-ink text-canvas h-14 px-8 inline-flex items-center gap-3 hover:bg-flame-red transition-colors text-[15px] font-heading font-semibold"
+                    >
+                      Order your jersey
+                      <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
+                    </Link>
+                    <Link
+                      href="#catalog"
+                      className="border border-line h-14 px-8 inline-flex items-center hover:border-ink text-[15px] font-heading"
+                    >
+                      Browse the drop
+                    </Link>
+                  </>
+                )}
               </div>
+              {SALES_CLOSED && (
+                <p className="rise rise-5 mt-6 body-lede text-[14px] text-muted max-w-xl">
+                  Self pickup opens {PICKUP_DATE} at {PICKUP_LOCATION}. Bring your payment receipt and
+                  order reference number. Terima kasih sudi membeli.
+                </p>
+              )}
               <div className="rise rise-5 mt-14 grid grid-cols-2 sm:grid-cols-4 gap-x-8 lg:gap-x-12 gap-y-8 max-w-2xl">
                 <Stat n="01" k="Short sleeve" v="RM 28" tint="text-flame-red" />
                 <Stat n="02" k="Long sleeve" v="RM 33" tint="text-flame-purple" />

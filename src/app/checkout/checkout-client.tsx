@@ -12,6 +12,8 @@ import { effectiveUnitPrice, surchargeLabel } from '@/lib/pricing';
 import { Input, Label } from '@/components/ui/input';
 import { ORG_CONTACT } from '@/lib/teams';
 import { BuiltByBadge } from '@/components/site/built-by';
+import { SALES_CLOSED } from '@/lib/sales';
+import { SalesClosedNotice } from '@/components/site/sales-closed-notice';
 
 type Step = 'review' | 'details' | 'payment';
 
@@ -138,6 +140,15 @@ export function CheckoutClient() {
   if (!ready) {
     return (
       <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-16 pb-32 text-muted">Loading.</div>
+    );
+  }
+
+  if (SALES_CLOSED && !order) {
+    return (
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-12 pb-32">
+        <p className="eyebrow">Checkout / closed</p>
+        <SalesClosedNotice />
+      </div>
     );
   }
 

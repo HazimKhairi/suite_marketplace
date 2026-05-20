@@ -6,6 +6,8 @@ import { TEAM } from '@/lib/teams';
 import { formatMYR } from '@/lib/utils';
 import { COMBOS } from '@/lib/combos';
 import type { Product } from '@/lib/types';
+import { SALES_CLOSED } from '@/lib/sales';
+import { SalesClosedNotice } from '@/components/site/sales-closed-notice';
 
 export const revalidate = 60;
 
@@ -39,6 +41,12 @@ export default async function JerseysPage() {
           </p>
         </div>
       </div>
+
+      {SALES_CLOSED && (
+        <div className="mb-12">
+          <SalesClosedNotice />
+        </div>
+      )}
 
       {COMBOS.length > 0 && products.length > 0 && (
         <section className="mb-12">

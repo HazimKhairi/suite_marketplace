@@ -9,6 +9,8 @@ import { effectiveUnitPrice, sizeSurcharge, surchargeLabel, SIZES } from '@/lib/
 import { Input, Label } from '@/components/ui/input';
 import { SizeChart } from '@/components/product/size-chart';
 import { SUITE_SPORTS, sportLabel } from '@/lib/sports';
+import { SALES_CLOSED } from '@/lib/sales';
+import { SalesClosedNotice } from '@/components/site/sales-closed-notice';
 import type { Product, CartItem } from '@/lib/types';
 import type { PlayerType } from '@/lib/teams';
 import type { TakenPlayer } from '@/lib/players';
@@ -19,6 +21,13 @@ type Props = {
 };
 
 export function ProductPurchase({ product, takenPlayers = [] }: Props) {
+  if (SALES_CLOSED) {
+    return <SalesClosedNotice variant="compact" />;
+  }
+  return <ProductPurchaseForm product={product} takenPlayers={takenPlayers} />;
+}
+
+function ProductPurchaseForm({ product, takenPlayers = [] }: Props) {
   const { add } = useCart();
   const isJacket = product.category === 'jacket';
 
